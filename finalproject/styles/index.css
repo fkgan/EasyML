@@ -1,0 +1,60 @@
+/* This is the content stylesheet of index.php */
+.text-holder{
+    margin-top: 10%;
+}
+
+.text-holder h1, .text-holder h3, .text-holder div{
+    margin-left: 10%;
+}
+
+.text-holder div{
+    margin-top: 50px;
+}
+
+.text-holder a:link, .text-holder a:visited{
+    background: #3C7CF1;
+    color: white;
+    border: 1px solid #3C7CF1;
+    border-radius: 5px;
+    padding: 12px 50px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.text-holder a:hover{
+    background: #1865F2;
+    border: 1px solid #1865F2;
+}
+
+.circle_red{
+    position: absolute;
+    width: 35%;
+    background-color: rgba(255, 0, 0, 0.6);
+    border-radius: 50%;
+    bottom: 15%;
+    right: -10%;
+}
+
+.circle_red::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.circle_white{
+    position: absolute;
+    width: 35%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    right: 5%;
+    bottom: -25%;
+    z-index: -1;
+}
+
+.circle_white::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}

@@ -1,0 +1,109 @@
+.content{
+    display: flex;
+}
+
+.login_form, .reg_form {
+    margin: auto;
+    background: white;
+    padding: 50px;
+    text-align: center;
+}
+
+.login_form h1, .reg_form h1 {
+    padding-bottom: 30px;
+}
+
+.login_form button {
+    background-color: #002975;
+    text-transform: uppercase;
+    color: white;
+    margin: 10px;
+    padding: 10px;
+    height: 50px;
+    width: 300px;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.reg_form button {
+    background-color: #002975;
+    text-transform: uppercase;
+    color: white;
+    margin: 10px;
+    padding: 10px;
+    height: 50px;
+    width: 400px;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.login_form button:hover, .reg_form button:focus {
+    box-shadow: 0 5px 15px rgba(127, 189, 255, .4);
+}
+
+button:focus{
+    outline: none;
+}
+
+.login_form input[name="username"], .login_form input[name="password"] {
+    background-color: #f2f2f2;
+    border: none;
+    margin: 10px;
+    padding: 10px;
+    height: 30px;
+    width: 280px;
+    font-size: 15px;
+}
+
+.reg_form input[name="username"], .reg_form input[name="password"], .reg_form input[name="email"], 
+.reg_form input[name="password_1"], .reg_form input[name="password_2"] {
+    background-color: #f2f2f2;
+    border: none;
+    margin: 10px;
+    padding: 10px;
+    height: 30px;
+    width: 380px;
+    font-size: 15px;
+}
+
+.reg_form input[name="fname"] {
+    background-color: #f2f2f2;
+    border: none;
+    margin: 10px;
+    margin-right: 2px;
+    margin-left: 2px;
+    padding: 10px;
+    height: 30px;
+    width: 120px;
+    font-size: 15px;
+}
+
+.reg_form input[name="lname"] {
+    background-color: #f2f2f2;
+    border: none;
+    margin: 10px;
+    margin-right: 2px;
+    margin-left: 2px;
+    padding: 10px;
+    height: 30px;
+    width: 230px;
+    font-size: 15px;
+}
+
+.login_form p, .reg_form p {
+    color: #808080;
+    font-size: 13px;
+}
+
+.login_form a, .reg_form a {
+    text-decoration: none;
+    color: #1E4999;
+}
+
+.login_form a:hover, .reg_form a:hover {
+    text-decoration: underline;
+}
+
+#error_msg {
+    color: red;
+}

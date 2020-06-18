@@ -1,0 +1,265 @@
+/*  --- general html css ---  */
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+}
+
+body{
+    background: #E9EDFE;
+}
+
+
+
+/*  -- header and nav section --  */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    padding: 0 5% 0 5%;
+}
+
+.brand-title {
+    margin: .5rem;
+    margin-left: 2rem;
+}
+
+.brand-title a {
+    font-family: 'Nunito', sans-serif;
+    font-size: 45px;
+    text-decoration: none;
+    color: #002975;
+}
+
+.navbar-links ul{
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar-links li{
+    list-style: none;
+    text-align: center;
+}
+
+.navbar-links ul li a{
+    text-decoration: none;
+    color: #1865F2;
+    padding: 1rem;
+    padding-right: 3.5rem;
+    font-size: 20px;
+    display: block;
+}
+
+.navbar-links li:hover a{
+    font-size: 22px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    margin-right: 5%;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background: #D3D3D3;
+}
+
+.navbar-links li:hover .dropdown-content {
+    display: block;
+}
+
+
+.toggle-button{
+    position: absolute;
+    top: 1.2rem;
+    right: 1rem;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 35px;
+    height: 21px;
+}
+
+.toggle-button .bar1, .bar2, .bar3{
+    height: 3px;
+    width: 90%;
+    background-color: #002975;
+    border-radius: 10px;
+    transition: 0.4s;
+}
+
+
+
+/*  -- content body section --  */
+.content{
+    /*vh - header(nav bar) - header-margin-top - header-padding-top;*/
+    min-height: calc(100vh - 100px - 30px - 20px);    /* To ensure footer is always correctly stay at the bottom of the page regardless of content. */
+    margin-top: 30px;
+    padding-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* refer more in other css file */
+
+
+
+/*  -- footer section --  */
+footer{
+    bottom: 0;
+    width: 100%;
+    height: 180px;
+    background-color: #172848;
+}
+/* Navigation panel in the footer section */
+.footer_panel{
+    padding-top: 25px;
+    margin-left: 80px;
+    margin-right: 80px;
+    line-height: 2.0;
+    color: white;
+    display: grid;
+    grid-template-columns: 1.5fr 2.5fr;
+    /* grid-template-columns: repeat(3, 1fr); /* Maybe split to 2 section instead of 3 section */
+    column-gap: 2em;
+    transition: all .5s;
+}
+
+.footer_panel h2{
+    font-family: "Montserrat Medium", sans-serif;
+    font-size: 25px;
+}
+
+#navigation_link_section{
+    display: grid;
+    grid-template-columns: 150px auto;
+}
+
+.footer_panel span, .footer_panel a{
+    font-size: 12px;
+    color: white;
+    text-decoration: none;
+}
+
+.footer_panel a:hover{
+    color:  #1865F2;
+    text-decoration: underline;
+}
+
+
+
+/*  --- Responsive design ---  */
+@media (max-width: 850px){
+    /*  -- header and nav section --  */
+    .navbar{
+        background-color: white;
+        height: auto;
+    }
+    
+    .toggle-button {
+        display: flex;
+        padding-top: 8px;
+    }
+
+    .navbar-links {
+        display: none;
+        width: 100%;
+    }
+
+    .brand-title {
+        margin: .5rem;
+    }
+
+    .navbar-links ul {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .navbar-links li {
+        text-align: center;
+    }
+
+    .navbar-links ul li a{
+        color: black;
+    }
+
+    .navbar-links li a {
+        padding: .5rem 1rem;
+    }
+
+    .navbar-links li a:hover {
+        background-color: #4E8DFF;
+        border-radius: 25px;
+    }
+
+    .navbar-links li a:active {
+        transform: translate3d(2px,2px,0);
+    }
+
+    .navbar-links.active {
+        display: flex;
+    }
+
+    .toggle-button.active .bar1{
+        -webkit-transform: rotate(-45deg) translate(-6px, 6px);
+        transform: rotate(-45deg) translate(-6px, 6px);
+    }
+
+    .toggle-button.active .bar2{
+        opacity: 0;
+    }
+
+    .toggle-button.active .bar3{
+        -webkit-transform: rotate(45deg) translate(-8px, -8px);
+        transform: rotate(45deg) translate(-8px, -8px);
+    }
+
+    /*  -- content body section --  */
+    /* refer to content.css */
+
+    /*  -- footer section --  */
+    /* Navigation panel in the footer section */
+    .footer_panel{
+        padding-top: 15px;
+        margin-left: 25px;
+        line-height: 1.5;
+        display: block;
+    }
+    /* Hide the unnecessary elements */
+    #information_section h2, #navigation_section h2, #pc_view{
+        display: none;
+    }
+    /* Display the prepared section for mobile view */
+    #mobile_view {
+        display: block;
+        color: grey;
+    }
+    /* Change to block display instead of grid */
+    #navigation_link_section{
+        display: block;
+        padding-top: 15px;
+    }
+    /* Increase the font size of the nav link for better view*/
+    #navigation_link_section a{
+        font-size: 15px;
+    }
+}
+
+/**/
+/*  --  --  */
