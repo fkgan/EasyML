@@ -47,7 +47,7 @@ body{
     text-decoration: none;
     color: #1865F2;
     padding: 1rem;
-    padding-right: 3.5rem;
+    padding-right: 3.2rem;
     font-size: 20px;
     display: block;
 }
@@ -61,17 +61,18 @@ body{
 .dropdown-content {
     display: none;
     position: absolute;
+    min-width: 160px;
     margin-right: 5%;
     right: 0;
     background-color: #f9f9f9;
-    min-width: 160px;
+    text-align: left;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
 .dropdown-content a {
     color: black;
-    padding: 12px 16px;
+    padding: 12px 12px;
     text-decoration: none;
     display: block;
 }
@@ -107,8 +108,10 @@ body{
 
 
 /*  -- content body section --  */
+/* refer content.css for ask and teach action */
+
 .content{
-    /*vh - header(nav bar) - header-margin-top - header-padding-top;*/
+    /* 100vh - header(nav bar) - header-margin-top - header-padding-top; */
     min-height: calc(100vh - 100px - 30px - 20px);    /* To ensure footer is always correctly stay at the bottom of the page regardless of content. */
     margin-top: 30px;
     padding-bottom: 20px;
@@ -116,7 +119,102 @@ body{
     overflow: hidden;
 }
 
-/* refer more in other css file */
+/* -start.php- */ 
+.datatype-container{
+    padding: 0;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.img-link{
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    height: calc(100vh - 150px);
+    width: 600px;
+}
+
+.img-link img{
+    height: 100%;
+    width: 100%;
+}
+
+.img-link span{
+    position: absolute;
+    top: 100px;
+    width: 80%;
+    left: calc(50% - 40%);
+    font-size: 38px;
+    font-weight: bolder;
+    color: black;
+    -webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
+
+.img-link:hover span{
+    font-size: 45px;
+    text-shadow: 0 0 3px white;
+}
+
+.img-link:hover img{
+    filter:blur(5px);
+}
+
+/* -settings.php- */ 
+.model-settings table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 80%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 100px;
+}
+
+.model-settings tr:hover td{
+    background-color: #aaa;
+    color: white;
+  }
+
+.model-settings td, .model-settings th {
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+}
+
+.model-settings th {
+    color: white;
+    background-color: #376ab7;
+}
+
+.model-settings .btn-del{
+    color: white;
+    background: #d43f3a;
+    border: 1px solid #d43f3a;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.model-settings .btn-del:hover{
+    opacity: 1;
+}
+
+.model-settings .alert-success {
+    margin: auto;
+    display: block;
+    text-align: center;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    width: 78%;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: .25rem;
+}
 
 
 
@@ -165,6 +263,23 @@ footer{
 
 
 /*  --- Responsive design ---  */
+@media (max-width: 1250px){
+    /*  -- content body section --  */
+    /* start.css */
+    .img-link{
+        width: 48%;
+    }
+    
+    .img-link span{
+        font-size: 35px;
+    }
+    
+    .img-link:hover > span{
+        font-size: 40px;
+    }
+
+}
+
 @media (max-width: 850px){
     /*  -- header and nav section --  */
     .navbar{
@@ -231,7 +346,19 @@ footer{
     }
 
     /*  -- content body section --  */
-    /* refer to content.css */
+    /* start.css */
+    .img-link{
+        width: 100%;
+        height: calc((100vh - 120px)/2);
+    }
+    
+    .img-link span{
+        font-size: 35px;
+    }
+    
+    .img-link:hover > span{
+        font-size: 40px;
+    }
 
     /*  -- footer section --  */
     /* Navigation panel in the footer section */

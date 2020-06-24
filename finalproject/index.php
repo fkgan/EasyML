@@ -1,4 +1,4 @@
-<?php include('server.php'); ?>
+<?php include('config/login_check.php');  // Make sure user is logged in ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,10 +26,11 @@
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="#about.php">About</a></li>
-                    <li><a href="start.php?op=ask">Ask</a></li>
-                    <li><a href="start.php?op=teach">Teach</a></li>
+                    <li><a href="start.php?action=ask">Ask</a></li>
+                    <li><a href="start.php?action=teach">Teach</a></li>
                     <li><a class="dropbtn"><?php echo $_SESSION['name']; ?></a>
                         <div class="dropdown-content">
+                            <a href="settings.php">Model Settings</a>
                             <a href="index.php?logout=1">Logout</a>
                         </div>
                     </li>
@@ -42,10 +43,10 @@
         <div class="text-holder">
             <h1>Teach Your Own Machine Learning !</h1><br/>
             <h3>Can you teach a neural network to recognize paragraph of text and digital image?</h3><br/>
-            <h3>Start teaching your machine now or challenge ur machine to answer your question!</h3>
+            <h3>Start teaching your machine now or challenge your machine to answer your question!</h3>
             <div>
-                <a href="start.php?op=ask">&nbsp;Ask&nbsp;</a>
-                <a href="start.php?op=teach">Teach</a>
+                <a href="start.php?action=ask">&nbsp;Ask&nbsp;</a>
+                <a href="start.php?action=teach">Teach</a>
             </div>
         </div>
         <div class="circle_red"></div>
@@ -69,9 +70,9 @@
                 <h2>Navigations</h2>
                 <div id="navigation_link_section">
                     <div><a href="#about.php">About</a></div>
-                    <div><a href="start.php?op=ask">Ask</a></div>
-                    <div><a href="#privacy.php">Privacy Policy</a></div>
-                    <div><a href="start.php?op=teach">Teach</a></div>
+                    <div><a href="start.php?action=ask">Ask</a></div>
+                    <div><a href="policy.html" onclick="javascript:void window.open('policy.html','_blank','width=700,height=500,toolbar=0,menubar=1,location=0,status=0,scrollbars=0,resizable=1,left=0,top=0');return false;">Privacy Policy</a></div>
+                    <div><a href="start.php?action=teach">Teach</a></div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<?php include('server.php'); ?>
+<?php include('config/login_check.php');  // Make sure user is logged in ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/teach.css">
+    <link rel="stylesheet" href="styles/content.css">
     <link rel="stylesheet" href="styles/stepProgressBar.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,800&display=swap" rel="stylesheet">
@@ -27,10 +27,11 @@
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="#about.php">About</a></li>
-                    <li><a href="start.php?op=ask">Ask</a></li>
-                    <li><a href="start.php?op=teach">Teach</a></li>
+                    <li><a href="start.php?action=ask">Ask</a></li>
+                    <li><a href="start.php?action=teach">Teach</a></li>
                     <li><a class="dropbtn"><?php echo $_SESSION['name']; ?></a>
                         <div class="dropdown-content">
+                            <a href="settings.php">Model Settings</a>
                             <a href="index.php?logout=1">Logout</a>
                         </div>
                     </li>
@@ -51,11 +52,12 @@
             </div>
         </div>
         <div class="content-border">
-        <div class="page" id="pg1">
+            <div class="page" id="pg1">
                 <div id="drop-region">
+                    <textarea id="text-area"></textarea>
                     <div class="drop-message" id="drop-message">
                         <img src="resources/upload.png" alt="">
-                        <p><span class="hl-deepblue">Drag & Drop</span> files here <br>or<br> <span class=underlined>click</span> to browse</p>
+                        <p><span class="hl-deepblue">Drag & Drop</span> files here <br />or<br />click anywhere to start typing</p>
                     </div>
                     <div id="text-preview"></div>
                 </div>
@@ -68,6 +70,10 @@
                         <div id="file-message"></div>
                     </div>
                     <textarea placeholder="Enter tags and split by ','" name="tags" id="tags" cols="40" rows="15"></textarea>
+                </div>
+                <div id="hint">
+                    <img src="resources/hintbot.png" alt="robot">
+                    <div id="hint-text">suggested tags will appear here</div>
                 </div>
             </div>
 
@@ -86,11 +92,38 @@
 
             <div class="page hidden" id="pg4">
                 <div id="tips"><h3 class="underline-small">Confirm your input</h3></div>
+                <div class="blackboard">
+                    <div class="blackboard-content">
+                        <div id="input-files">
+                            <h1>Text</h1>
+                        </div>
+                        <div id="next-column">
+                            <div id="input-tags">
+                                <h1>Tags</h1>
+                                <p id="tags-review"></p>
+                            </div>
+                            <div id="input-sentiment"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page hidden" id="pg5">
+                <div id="pg5-message">
+                    <h1>All done!<span id="checkmark"></span></h1>
+                    <h3>Congratulations! You just successfully taught the Machine to pick up some new knowledge! <br />Wasn't it easy ? You can continue to teach more or try the Machine out by asking some questions!</h3>
+                </div>
+                <div class="link-area">
+                    <a href="start.php?action=ask">&nbsp;Ask&nbsp;</a>
+                    <a href="start.php?action=teach">Teach</a>
+                </div>
+                <img id="cartoon-icon" src='resources/robot.png' alt="robot">
             </div>
             
             <div class="button-area">
                 <button class="button hidden" id="editBtn"><b>Edit</b></button>
                 <button class="button hidden" id="backBtn"><b>Back</b></button>
+                <button class="button" id="browseBtn"><b>Browse</b></button>
                 <button class="button" id="nextBtn"><b>Next</b></button>
             </div>
         </div>
@@ -113,9 +146,9 @@
                 <h2>Navigations</h2>
                 <div id="navigation_link_section">
                     <div><a href="#about.php">About</a></div>
-                    <div><a href="start.php?op=ask">Ask</a></div>
-                    <div><a href="#privacy.php">Privacy Policy</a></div>
-                    <div><a href="start.php?op=teach">Teach</a></div>
+                    <div><a href="start.php?action=ask">Ask</a></div>
+                    <div><a href="policy.html" onclick="javascript:void window.open('policy.html','_blank','width=700,height=500,toolbar=0,menubar=1,location=0,status=0,scrollbars=0,resizable=1,left=0,top=0');return false;">Privacy Policy</a></div>
+                    <div><a href="start.php?action=teach">Teach</a></div>
                 </div>
             </div>
         </div>

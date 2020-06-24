@@ -1,18 +1,11 @@
 <?php
 session_start();
 
+// include database connection
+include('config/db_connect.php');
+
 // Initialize variable
 $errors = array();
-
-// Connecting to MySQL database
-DEFINE ('DB_HOST', 'localhost');    //server name
-DEFINE ('DB_USER', 'root');         //database username
-DEFINE ('DB_PASSWORD', '');         //password
-DEFINE ('DB_NAME', 'ezml');         //database name to connect to
-$user_table = "users";
-
-// Establish the connection
-$db = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die('Could not connect to database: '.mysqli_connect_error() );
 
 //Login user
 if(isset($_POST['login'])){
@@ -32,10 +25,12 @@ if(isset($_POST['login'])){
     $user = mysqli_fetch_assoc($result);       //to access the result
 
     if(mysqli_num_rows($result) > 0){
-      $_SESSION['userID'] = $user['userID'];               // store userID
-      $_SESSION['username'] = $user['username'];           // store username
-      $_SESSION['name'] = $user['firstName'] . " " . $user['lastName'];    // store user real name
-      $_SESSION['success'] = "Logged in successfully";  // store message to indicate success login
+      $_SESSION['userID'] = $user['userID'];              // store userID
+      $_SESSION['username'] = $username;                  // store username
+      $_SESSION['password'] = $password;                  // store password
+      $_SESSION['name'] = $user['firstName'];             // store user first name to address him
+      //$_SESSION['name'] = $user['firstName'] . " " . $user['lastName'];    // store user full name
+      $_SESSION['success'] = "Logged in successfully";    // store message to indicate success login
 
       // update the lastLoginDate
       $query = "UPDATE $user_table SET lastLoginDate = NOW() WHERE username='$username'";

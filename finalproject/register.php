@@ -38,7 +38,7 @@ if(isset($_SESSION['userID']) && isset($_SESSION['success'])){
         <form class="reg_form" action="register.php" method="post">
             <h1>Create an account</h1>
             <div><input type="text" name="username" placeholder="Username" required></div>
-            <div><input type="text" name="email" placeholder="Email" required></div>
+            <div><input type="email" name="email" placeholder="Email" required></div>
             <div><input type="text" name="fname" placeholder="First Name" required>
             <input type="text" name="lname" placeholder="Last Name" required></div>
             <div><input type="password" name="password_1" placeholder="Password" required></div>

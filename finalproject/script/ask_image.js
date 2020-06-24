@@ -1,15 +1,9 @@
-// before exiting the page
-window.onbeforeunload = function () {
-    // if user has uploaded anything
-    if (urls.length > 0) {
-        return 'Changes you made may not be saved.';
-    }
-};
-
 var // button to trigger the next step
     nextBtn = document.getElementById('nextBtn'),
     // button to go to previous step
     backBtn = document.getElementById('backBtn'),
+    // button to trigger windows file selector
+    browseBtn = document.getElementById('browseBtn'),
     // the number of steps
     steps = [...document.querySelectorAll('.steps')],
     // access to the page of each step
@@ -26,6 +20,14 @@ var // button to trigger the next step
 const MAX_STEPS = 2;
 let currentStep = 1;
 
+// before exiting the page
+window.onbeforeunload = function () {
+    // if user has uploaded anything, or has done asking
+    if (urls.length > 0 && currentStep != 3) {
+        return 'Changes you made may not be saved.';
+    }
+};
+
 // when the next button is click
 nextBtn.addEventListener('click', () => {
     if (currentStep == 1) {
@@ -34,6 +36,26 @@ nextBtn.addEventListener('click', () => {
             alert("Please upload at least 1 image!");
         }
         else {
+            if (urls.length == 1) {
+                document.getElementById('pg2-img').src = urls[0];
+                document.getElementById('pg2-img').style.position = "absolute";
+                document.getElementById('pg2-img').style.width = "auto";
+                document.getElementById('pg2-img').style.height = "auto";
+                document.getElementById('pg2-img').style.paddingTop = "0%";
+                document.getElementById('file-message').innerHTML = "";
+            }
+            else if (urls.length > 1) {
+                document.getElementById('pg2-img').src = "resources/filebox.svg";
+                document.getElementById('pg2-img').style.position = "relative";
+                document.getElementById('pg2-img').style.width = "50%";
+                document.getElementById('pg2-img').style.height = "50%";
+                document.getElementById('pg2-img').style.paddingTop = "20%";
+                document.getElementById('file-message').innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
+            }
+
+            nextBtn.innerHTML = "<b>Ask</b>";
+            backBtn.classList.remove('hidden'); // show the back button
+            browseBtn.classList.add('hidden');  // hide the browse button
             nextStep();
         }
     }
@@ -53,7 +75,8 @@ nextBtn.addEventListener('click', () => {
 backBtn.addEventListener('click', () => {
     if (currentStep == 2) {
         nextBtn.innerHTML = "<b>Next</b>";
-        backBtn.classList.add('hidden');
+        backBtn.classList.add("hidden");        // hide the back button
+        browseBtn.classList.remove("hidden");   // show the browse button
     }
     prevStep();
 });
@@ -69,31 +92,8 @@ function nextStep() {
 
     if (currentStep < MAX_STEPS) {
         steps[currentStep].classList.add('doing');
-
         pages[currentStep - 1].classList.add('hidden');
         pages[currentStep].classList.remove('hidden');
-    }
-
-    if (currentStep == 1) {
-        if (urls.length == 1) {
-            document.getElementById('pg2-img').src = urls[0];
-            document.getElementById('pg2-img').style.position = "absolute";
-            document.getElementById('pg2-img').style.width = "auto";
-            document.getElementById('pg2-img').style.height = "auto";
-            document.getElementById('pg2-img').style.paddingTop = "0%";
-            document.getElementById('file-message').innerHTML = "";
-        }
-        else if (urls.length > 1) {
-            document.getElementById('pg2-img').src = "resources/filebox.svg";
-            document.getElementById('pg2-img').style.position = "relative";
-            document.getElementById('pg2-img').style.width = "50%";
-            document.getElementById('pg2-img').style.height = "50%";
-            document.getElementById('pg2-img').style.paddingTop = "20%";
-            document.getElementById('file-message').innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
-        }
-
-        nextBtn.innerHTML = "<b>Ask</b>";
-        backBtn.classList.remove('hidden');
     }
 
     currentStep += 1;
@@ -122,6 +122,11 @@ input.multiple = true;
 
 dropRegion.addEventListener('click', function () {
     input.click();
+});
+
+browseBtn.addEventListener('click', function () {
+    input.click();
+    reset();
 });
 
 input.addEventListener("change", function () {
@@ -153,9 +158,7 @@ dropRegion.addEventListener('drop', handleDrop, false);
 // When a change is detected in drop-region
 function handleFiles(files) {
     // Reset some element when new file is uploaded
-    empty();
-    removeElementsByClass("image-view");
-    document.getElementById("tags").value = "";
+    reset();
 
     // Controls the drop-region message indicator to tell user upload files
     if (files.length > 0) {
@@ -199,7 +202,7 @@ function previewImage(image) {
     var reader = new FileReader();
     reader.onload = function (e) {
         img.src = e.target.result;
-        append_URLs(e.target.result);
+        urls.push(e.target.result);       // Append the results into urls array
     }
     reader.readAsDataURL(image);
 }
@@ -212,32 +215,43 @@ function removeElementsByClass(className) {
     }
 }
 
-//To empty urls array
-function empty() {
-    urls = [];
+// Reset some element when new file is uploaded
+function reset() {
+    urls = [];      // To empty urls array
+    removeElementsByClass("image-view");
+    document.getElementById("tags").value = "";
 }
 
-//To append data into urls array
-function append_URLs(url) {
-    urls.push(url);
+//To extract the tag from input text
+function tag_processing(text) {
+    //Extract the tags
+    var temp_tags = text.split(",");
+    var tags = [];
+
+    for (var i = 0, j = 0; i < temp_tags.length; i++) {
+        if (temp_tags[i].trim() != "") {
+            tags[j] = temp_tags[i].trim();
+            j++;
+        }
+    }
+
+    return tags;
 }
 
 function ask() {
-    //Extract the tags
+    // Extracting the tags
     var text = document.getElementById("tags").value;
-    var tags = text.split(",");
-    for (var i = 0; i < tags.length; i++) {
-        tags[i] = tags[i].trim();
-    }
+    var tags = tag_processing(text);
 
     // create FormData
     var formData = new FormData();
-    formData.append('operation', 'ask');
+    formData.append('action', 'ask');
+    formData.append('datatype', 'blob')
+    formData.append('data', JSON.stringify(urls));
     formData.append('tags', JSON.stringify(tags));
-    formData.append('files', JSON.stringify(urls));
 
+    //var uploadLocation = 'API_call.php';
     var uploadLocation = 'process.php';
-
     var ajax = new XMLHttpRequest();
     ajax.open("POST", uploadLocation, true);
 

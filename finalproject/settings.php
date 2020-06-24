@@ -1,20 +1,10 @@
-<?php
+<?php 
     include('config/login_check.php');  // Make sure user is logged in
+    include('config/db_connect.php');   // include database connection
 
-    //Prevent user somehow jump to this page without chosing operation
-    if ( !(isset($_GET['action'])) || $_GET['action'] == NULL ){
-        header('Location: index.php');
-    }
-
-    if ($_GET['action'] == "ask"){
-        $link = 'ask';
-    }
-    else if ($_GET['action'] == "teach"){
-        $link = 'teach';
-    }
-    else {
-        header('Location: index.php');
-    }
+    $userID = $_SESSION['userID'];
+    $query = "SELECT td.* FROM user_model as um right join $data_table as td on um.userOwnModelID = td.userOwnModelID where um.userID = $userID and deleted = 0";
+    $result = mysqli_query($db, $query);      // query the result from database
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start</title>
+    <title>Setting</title>
     <link rel="stylesheet" href="styles/style.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,800&display=swap" rel="stylesheet">
@@ -56,15 +46,53 @@
     </header>
 
     <div class="content">
-        <div class="datatype-container">
-            <div class="img-link">
-                <a <?php echo 'href="'. $link .'_text.php"' ?> ><img src="resources/text.jpg" alt="Text"></a>
-                <span>Text</span>
-            </div>
-            <div class="img-link">
-                <a <?php echo 'href="'. $link .'_image.php"' ?> ><img src="resources/image.jpg" alt="Image"></a>
-                <span>Image with Text</span>
-            </div>
+        <div class="model-settings">
+            <?php
+            $action = isset($_GET['action']) ? $_GET['action'] : "";
+            
+            // if it was redirected from delete.php
+            if($action == 'deleted'){
+                echo "<div class='alert-success'>Record is successfully deleted.</div>";
+            }
+
+            ?>
+
+            <table>
+            <tr>
+                <th>No.</th>
+                <th style="width: 55%;">Data</th>
+                <th>Tags</th>
+                <th>Sentiment</th>
+                <th>Date Trained</th>
+                <th>Action</th>
+            </tr>
+            <?php
+                // check if more than 0 record found
+                if(mysqli_num_rows($result) > 0){
+                    $counter = 0;
+                    while ($row = mysqli_fetch_assoc($result)){
+                        extract($row);
+                        $counter += 1;
+                        echo "<tr>";
+                            echo "<td>{$counter}</td>";
+                            echo "<td>{$rawTextData}</td>";
+                            echo "<td>{$tags}</td>";
+                            echo "<td>{$sentiment}</td>";
+                            echo "<td>{$dateTrained}</td>";
+                            echo "<td>";
+                                echo "<a href='#' onclick='delete_data({$trainingID});'  class='btn-del'>Delete</a>";
+                            echo "</td>";
+                        echo "</tr>";
+                    }
+                }
+                // if no records found
+                else{
+                    echo "<tr>";
+                        echo "<td colspan='6'>No result to display, start teach some knowledge to your model.</td>";
+                    echo "</tr>";
+                }
+            ?>
+            </table>
         </div>
     </div>
 

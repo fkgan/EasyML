@@ -1,4 +1,4 @@
-<?php include('server.php'); ?>
+<?php include('config/login_check.php');  // Make sure user is logged in ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +9,17 @@
     <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/stepProgressBar.css">
-    <link rel="stylesheet" href="styles/ask.css">
+    <link rel="stylesheet" href="styles/content.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,800&display=swap" rel="stylesheet">
+    <style>
+        .progress-container {
+            width: 300px;
+        }
+        .progressbar li {
+            width: 50%;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,10 +35,11 @@
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="#about.php">About</a></li>
-                    <li><a href="start.php?op=ask">Ask</a></li>
-                    <li><a href="start.php?op=teach">Teach</a></li>
+                    <li><a href="start.php?action=ask">Ask</a></li>
+                    <li><a href="start.php?action=teach">Teach</a></li>
                     <li><a class="dropbtn"><?php echo $_SESSION['name']; ?></a>
                         <div class="dropdown-content">
+                            <a href="settings.php">Model Settings</a>
                             <a href="index.php?logout=1">Logout</a>
                         </div>
                     </li>
@@ -53,7 +62,7 @@
                 <div id="drop-region">
                     <div class="drop-message" id="drop-message">
                         <img src="resources/upload.png" alt="">
-                        <p><span class="hl-deepblue">Drag & Drop</span> files here <br>or<br> <span class=underlined>click</span> to browse</p>
+                        <p><span class="hl-deepblue">Drag & Drop</span> files here <br>or<br> click to browse</p>
                     </div>
                     <div id="image-preview"></div>
                 </div>
@@ -66,13 +75,17 @@
                         <img id="pg2-img" alt="image-preview"></img>
                         <div id="file-message"></div>
                     </div>
-                    
                     <textarea placeholder="Enter tags and split by ','" name="tags" id="tags" cols="40" rows="15"></textarea>
+                </div>
+                <div id="hint">
+                    <img src="resources/hintbot.png" alt="robot">
+                    <div id="hint-text">suggested tags will appear here</div>
                 </div>
             </div>
             
             <div class="button-area">
                 <button class="button hidden" id="backBtn"><b>Back</b></button>
+                <button class="button" id="browseBtn"><b>Browse</b></button>
                 <button class="button" id="nextBtn"><b>Next</b></button>
             </div>
             
@@ -97,9 +110,9 @@
                 <h2>Navigations</h2>
                 <div id="navigation_link_section">
                     <div><a href="#about.php">About</a></div>
-                    <div><a href="start.php?op=ask">Ask</a></div>
-                    <div><a href="#privacy.php">Privacy Policy</a></div>
-                    <div><a href="start.php?op=teach">Teach</a></div>
+                    <div><a href="start.php?action=ask">Ask</a></div>
+                    <div><a href="policy.html" onclick="javascript:void window.open('policy.html','_blank','width=700,height=500,toolbar=0,menubar=1,location=0,status=0,scrollbars=0,resizable=1,left=0,top=0');return false;">Privacy Policy</a></div>
+                    <div><a href="start.php?action=teach">Teach</a></div>
                 </div>
             </div>
         </div>

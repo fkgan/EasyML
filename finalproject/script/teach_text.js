@@ -1,22 +1,18 @@
-// before exiting the page
-window.onbeforeunload = function () {
-    // if user has uploaded anything
-    if (urls.length > 0) {
-        return 'Changes you made may not be saved.';
-    }
-};
-
 var // button to trigger the next step
     nextBtn = document.getElementById('nextBtn'),
     // button to go to previous step
     backBtn = document.getElementById('backBtn'),
     // button to trigger edit function
     editBtn = document.getElementById('editBtn'),
+    // button to trigger windows file selector
+    browseBtn = document.getElementById('browseBtn'),
     // the number of steps
     steps = [...document.querySelectorAll('.steps')],
     // access to the page of each step
     pages = [...document.querySelectorAll('.page')],
-    // where files are dropped + file selector is opened
+    // where user write their text
+    ta = document.getElementById('text-area'),
+    // where files are dropped
     dropRegion = document.getElementById("drop-region"),
     // the drop message
     dropMessage = document.getElementById("drop-message"),
@@ -30,15 +26,73 @@ var // button to trigger the next step
 const MAX_STEPS = 4;
 let currentStep = 1;
 
+// before exiting the page
+window.onbeforeunload = function () {
+    // if user has uploaded anything, or has done asking
+    if (urls.length > 0 && ta.value == "" && currentStep != 3) {
+        return 'Changes you made may not be saved.';
+    }
+};
+
+window.onclick = function () {
+    // when text area is not selected on html window click
+    if (ta !== document.activeElement) {
+        // if there's nothing in text area and no file upload
+        if (ta.value == "" && urls.length == 0) {
+            // show drop message and enable browse button
+            dropMessage.classList.remove('hidden');
+            browseBtn.disabled = false;
+        }
+        // if there's file uploaded
+        if (urls.length != 0) {
+            browseBtn.disabled = false;     // make sure the browse button is enabled
+        }
+    }
+};
+
 // when the next button is click
 nextBtn.addEventListener('click', () => {
     // On step 1
     if (currentStep == 1) {
         // Check if there's any text file uploaded
-        if (urls.length < 1) {
-            alert("Please upload at least 1 text file!");
+        if (urls.length < 1 && ta.value == "") {
+            alert("Please upload at least 1 text file or write something!");
         }
         else {
+            // Changing the file preview in page 2
+            var display = document.createElement("pg2-display");
+            display.className = "pg2-display";
+            pg2Preview.appendChild(display);
+
+            if (urls.length >= 1) {
+                if (urls.length == 1) {
+                    var i = document.createElement("iframe");
+                    display.append(i);
+                    i.src = urls[0];
+                }
+                else {
+                    var i = document.createElement("img");
+                    var fm = document.createElement("div");
+                    fm.id = "file-message";
+                    display.append(i);
+                    display.append(fm);
+                    i.src = "resources/filebox.svg";
+                    i.style.position = "relative";
+                    i.style.width = "50%";
+                    i.style.height = "50%";
+                    i.style.paddingTop = "20%";
+                    fm.innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
+                }
+            }
+            else if (ta.value != "") {
+                var i = document.createElement("iframe");
+                display.append(i);
+                i.src = encodeToBase64(ta.value, 'text/plain');
+            }
+
+            editBtn.classList.add('hidden');
+            browseBtn.classList.add('hidden');
+            backBtn.classList.remove('hidden');
             nextStep();
         }
     }
@@ -59,73 +113,102 @@ nextBtn.addEventListener('click', () => {
             alert("Please choose one of the sentiment");
         }
         else {
+            inputfiles = document.getElementById('input-files');
+            var txtView = document.createElement("div");
+            txtView.className = "input-view";
+            inputfiles.appendChild(txtView);
+
+            if (ta.value != "") {
+                var ifr = document.createElement("iframe");
+                txtView.appendChild(ifr);
+                ifr.src = encodeToBase64(ta.value, 'text/plain');
+            }
+            else if (urls.length > 0) {
+                // append iframe to preview
+                for (var i = 0; i < urls.length; i++) {
+                    var ifr = document.createElement("iframe");
+                    txtView.appendChild(ifr);
+                    ifr.src = urls[i];
+                }
+            }
+
+            // extract the tags value
+            var text = document.getElementById("tags").value;
+            var tags = tag_processing(text);
+            var tags_str = tags[0];
+
+            for (var i = 1; i < tags.length; i++) {
+                tags_str = tags_str + ", " + tags[i];
+            }
+
+            document.getElementById('tags-review').innerHTML = tags_str;
+
+            // taking sentiment value
+            var sentiment = document.querySelector('input[name="sentiment"]:checked').value;
+            document.getElementById('input-sentiment').innerHTML = "Sentiment: " + sentiment;
+
+            nextBtn.innerHTML = "<b>Teach</b>";     // Changing text to confirm before step 4
             nextStep();
         }
     }
     // On step 4
     else if (currentStep == 4) {
-        teach();        //sending data to server
-        nextStep();     //proceed to done
+        teach();                            // sending data to server
+        nextStep();                         // proceed to done
         backBtn.classList.add('hidden');    // hide the back button
+        nextBtn.classList.add('hidden');    // hide the next button
     }
 });
 
 backBtn.addEventListener('click', () => {
-    nextBtn.innerHTML = "<b>Next</b>";
-
     if (currentStep == 2) {
-        backBtn.classList.add("hidden");
+        removeElementsByClass("pg2-display");   // delete the page 2 displaying element that is generated so it dont generate again when next is click
+        backBtn.classList.add("hidden");        // hide the back button
+        browseBtn.classList.remove("hidden");   // show the browse button
+
+        if (urls.length == 1) {
+            if (urls[0].includes("data:text/plain;")) {
+                // allow edit
+                editBtn.classList.remove('hidden');
+            }
+        }
     }
 
+    if (currentStep == 4) {
+        removeElementsByClass("input-view");
+    }
+
+    nextBtn.innerHTML = "<b>Next</b>";
     prevStep();
+});
+
+editBtn.addEventListener('click', () => {
+    // safety measure
+    if (urls.length > 1 || urls.length < 0) {
+        alert('Error. Edit is not available');
+        return;
+    }
+    else {
+        removeElementsByClass("text-view");
+        // convert the blob url into plain text for editing
+        var textdata = atob(urls[0].replace('data:text/plain;base64,', ''));
+        ta.value = textdata;
+        ta.style.zIndex = 1;
+        urls = [];          // To empty urls array
+        browseBtn.disabled = true;
+        editBtn.classList.add('hidden');
+    }
 });
 
 // Proceed to next step(page)
 function nextStep() {
     steps[currentStep - 1].classList.add('done');
     steps[currentStep - 1].classList.remove('doing');
-
-    //pages[currentStep - 1].classList.add('hidden');   // For the page 5 : Thank you
+    pages[currentStep - 1].classList.add('hidden');
+    pages[currentStep].classList.remove('hidden');
 
     if (currentStep < MAX_STEPS) {
         steps[currentStep].classList.add('doing');
-
-        pages[currentStep - 1].classList.add('hidden');
-        pages[currentStep].classList.remove('hidden');
-    }
-
-    // Changing the file preview in page 2
-    if (currentStep == 1) {
-        var display = document.createElement("pg2-display");
-        display.className = "pg2-display";
-        pg2Preview.appendChild(display);
-
-        if (urls.length == 1) {
-            var i = document.createElement("iframe");
-            display.append(i);
-            i.src = urls[0];
-        }
-        else if (urls.length > 1) {
-            var i = document.createElement("img");
-            var fm = document.createElement("div");
-            fm.id = "file-message";
-            display.append(i);
-            display.append(fm);
-            i.src = "resources/filebox.svg";
-            i.style.position = "relative";
-            i.style.width = "50%";
-            i.style.height = "50%";
-            i.style.paddingTop = "20%";
-
-            fm.innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
-        }
-
-        editBtn.classList.add('hidden');
-        backBtn.classList.remove('hidden');
-    }
-    // Changing text to Teach before step 4
-    if (currentStep == 3) {
-        nextBtn.innerHTML = "<b>Teach</b>";
     }
 
     currentStep += 1;
@@ -136,11 +219,6 @@ function nextStep() {
 }
 
 function prevStep() {
-    if (currentStep == 2) {
-        // delete the page 2 displaying element that is generated so it dont generate again when next is click
-        removeElementsByClass("pg2-display");
-    }
-
     currentStep -= 1;
     steps[currentStep - 1].classList.add('doing');
     steps[currentStep].classList.remove('doing');
@@ -157,11 +235,13 @@ input.type = "file";
 input.accept = "text/plain, application/pdf";
 input.multiple = true;
 
-dropRegion.addEventListener('click', function () {
+browseBtn.addEventListener('click', function () {
     input.click();
+    reset();
 });
 
 input.addEventListener("change", function () {
+    reset();
     var files = input.files;
     handleFiles(files);
 });
@@ -190,11 +270,7 @@ dropRegion.addEventListener('drop', handleDrop, false);
 
 // When a change is detected in drop-region
 function handleFiles(files) {
-    // Reset some element when new file is uploaded
-    empty();
-    removeElementsByClass("text-view");
-    removeElementsByClass("pg2-display");
-    document.getElementById("tags").value = "";
+    reset();    // Reset some element when new file is uploaded
 
     if (!editBtn.classList.contains('hidden')) {
         editBtn.classList.add('hidden');
@@ -204,10 +280,12 @@ function handleFiles(files) {
     if (files.length > 0) {
         // When at least 1 file is uploaded, hide the drop-region message
         dropMessage.classList.add('hidden');
+        ta.style.zIndex = -1;
     }
     else {
         // If there is no file uploaded, unhide the drop-region message back
         dropMessage.classList.remove('hidden');
+        ta.style.zIndex = 1;
     }
 
     //Validate if the file is text/pdf, and if it is, spawn the text preview using iframe
@@ -253,11 +331,32 @@ function previewTextFile(textfile) {
     var reader = new FileReader();
     reader.onload = function (e) {
         i.src = e.target.result;
-        append_URLs(e.target.result);
+        urls.push(e.target.result);     //Append the results into urls array
     }
     reader.readAsDataURL(textfile);
 }
 
+ta.addEventListener('change', () => {
+    if (ta.value == "") {
+        // Show drop message
+        dropMessage.classList.remove('hidden');
+        browseBtn.disabled = false;
+    }
+    else {
+        // Hide drop message
+        dropMessage.classList.add('hidden');
+        browseBtn.disabled = true;
+    }
+});
+
+
+ta.addEventListener('click', () => {
+    if (ta === document.activeElement) {
+        // Hide drop message
+        dropMessage.classList.add('hidden');
+        browseBtn.disabled = true;
+    }
+});
 
 // To delete all the element inside the class
 function removeElementsByClass(className) {
@@ -267,35 +366,66 @@ function removeElementsByClass(className) {
     }
 }
 
-//To empty urls array
-function empty() {
-    urls = [];
+// Reset some element when new file is uploaded
+function reset() {
+    urls = [];          // To empty urls array
+    ta.value = "";      // To empty the text area
+    removeElementsByClass("text-view");
+    removeElementsByClass("pg2-display");
+    dropMessage.classList.remove('hidden');
+    editBtn.classList.add('hidden');
+    document.getElementById("tags").value = "";
+    ta.style.zIndex = 1;
 }
 
-//To append data into urls array
-function append_URLs(url) {
-    urls.push(url);
+// Encoding string data into base64 blob data
+function encodeToBase64(string, type) {
+    var type = "data:" + type + ";base64,";
+    return type + btoa(string);
+}
+
+//To extract the tag from input text
+function tag_processing(text) {
+    //Extract the tags
+    var temp_tags = text.split(",");
+    var tags = [];
+
+    for (var i = 0, j = 0; i < temp_tags.length; i++) {
+        if (temp_tags[i].trim() != "") {
+            tags[j] = temp_tags[i].trim();
+            j++;
+        }
+    }
+
+    return tags;
 }
 
 function teach() {
-    //Extract the tags
+    // Extracting the tags
     var text = document.getElementById("tags").value;
-    var tags = text.split(",");
-    for (var i = 0; i < tags.length; i++) {
-        tags[i] = tags[i].trim();
-    }
+    var tags = tag_processing(text);
 
     // taking sentiment value
     var sentiment = document.querySelector('input[name="sentiment"]:checked').value;
 
     // create FormData
     var formData = new FormData();
-    formData.append('operation', 'teach');
+    formData.append('action', 'teach');
     formData.append('tags', JSON.stringify(tags));
     formData.append('sent', sentiment);
-    formData.append('img', JSON.stringify(urls));
 
-    var uploadLocation = 'process.php';
+    if (ta.value != "") {
+        formData.append('datatype', 'text');
+        formData.append('data', JSON.stringify(ta.value));
+        // encode to blob instead
+        //formData.append('files', JSON.stringify(encodeToBase64(ta.value, 'text/plain')));
+    }
+    else if (urls.length > 0) {
+        formData.append('datatype', 'blob')
+        formData.append('data', JSON.stringify(urls));
+    }
+
+    var uploadLocation = 'API_call.php';
     var ajax = new XMLHttpRequest();
     ajax.open("POST", uploadLocation, true);
 

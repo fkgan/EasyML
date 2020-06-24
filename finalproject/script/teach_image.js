@@ -1,15 +1,9 @@
-// before exiting the page
-window.onbeforeunload = function () {
-    // if user has uploaded anything, or has done teaching
-    if (urls.length > 0 && currentStep != 5) {
-        return 'Changes you made may not be saved.';
-    }
-};
-
 var // button to trigger the next step
     nextBtn = document.getElementById('nextBtn'),
     // button to go to previous step
     backBtn = document.getElementById('backBtn'),
+    // button to trigger windows file selector
+    browseBtn = document.getElementById('browseBtn'),
     // the number of steps
     steps = [...document.querySelectorAll('.steps')],
     // access to the page of each step
@@ -25,6 +19,14 @@ var // button to trigger the next step
 
 const MAX_STEPS = 4;
 let currentStep = 1;
+
+// before exiting the page
+window.onbeforeunload = function () {
+    // if user has uploaded anything, or has done teaching
+    if (urls.length > 0 && currentStep != 5) {
+        return 'Changes you made may not be saved.';
+    }
+};
 
 // when the next button is click
 nextBtn.addEventListener('click', () => {
@@ -54,6 +56,7 @@ nextBtn.addEventListener('click', () => {
             }
 
             backBtn.classList.remove('hidden'); // show the back button
+            browseBtn.classList.add('hidden');  // hide the browse button
             nextStep();
         }
     }
@@ -110,20 +113,21 @@ nextBtn.addEventListener('click', () => {
         teach();                            // sending data to server
         nextStep();                         // proceed to done
         backBtn.classList.add('hidden');    // hide the back button
+        nextBtn.classList.add('hidden');    // hide the next button
     }
 });
 
 backBtn.addEventListener('click', () => {
-    nextBtn.innerHTML = "<b>Next</b>";
-
     if (currentStep == 2) {
-        backBtn.classList.add("hidden");
+        backBtn.classList.add("hidden");        // hide the back button
+        browseBtn.classList.remove("hidden");   // show the browse button
     }
 
     if (currentStep == 4) {
         removeElementsByClass("input-view");
     }
 
+    nextBtn.innerHTML = "<b>Next</b>";
     prevStep();
 });
 
@@ -132,14 +136,11 @@ backBtn.addEventListener('click', () => {
 function nextStep() {
     steps[currentStep - 1].classList.add('done');
     steps[currentStep - 1].classList.remove('doing');
-
-    //pages[currentStep - 1].classList.add('hidden');   // For the page 5 : Thank you
+    pages[currentStep - 1].classList.add('hidden');
+    pages[currentStep].classList.remove('hidden');
 
     if (currentStep < MAX_STEPS) {
         steps[currentStep].classList.add('doing');
-
-        pages[currentStep - 1].classList.add('hidden');
-        pages[currentStep].classList.remove('hidden');
     }
 
     currentStep += 1;
@@ -167,6 +168,12 @@ input.accept = "image/*";
 input.multiple = true;
 
 dropRegion.addEventListener('click', function () {
+    reset();
+    input.click();
+});
+
+browseBtn.addEventListener('click', function () {
+    reset();
     input.click();
 });
 
@@ -186,7 +193,6 @@ dropRegion.addEventListener('dragleave', preventDefault, false)
 dropRegion.addEventListener('dragover', preventDefault, false)
 dropRegion.addEventListener('drop', preventDefault, false)
 
-
 function handleDrop(e) {
     var dt = e.dataTransfer,
         files = dt.files;
@@ -196,13 +202,10 @@ function handleDrop(e) {
 
 dropRegion.addEventListener('drop', handleDrop, false);
 
-
 // When a change is detected in drop-region
 function handleFiles(files) {
     // Reset some element when new file is uploaded
-    empty();
-    removeElementsByClass("image-view");
-    document.getElementById("tags").value = "";
+    reset();
 
     // Controls the drop-region message indicator to tell user upload files
     if (files.length > 0) {
@@ -214,7 +217,7 @@ function handleFiles(files) {
         dropMessage.classList.remove('hidden');
     }
 
-    //Validate if the file is image, and if it is, spawn the image preview
+    // Validate if the file is image, and if it is, spawn the image preview
     for (var i = 0, len = files.length; i < len; i++) {
         if (validateImage(files[i])) {
             previewImage(files[i]);
@@ -246,7 +249,7 @@ function previewImage(image) {
     var reader = new FileReader();
     reader.onload = function (e) {
         img.src = e.target.result;
-        append_URLs(e.target.result);
+        urls.push(e.target.result);       // Append the results into urls array
     }
     reader.readAsDataURL(image);
 }
@@ -259,14 +262,11 @@ function removeElementsByClass(className) {
     }
 }
 
-//To empty urls array
-function empty() {
-    urls = [];
-}
-
-//To append data into urls array
-function append_URLs(url) {
-    urls.push(url);
+// Reset some element when new file is uploaded
+function reset() {
+    urls = [];      // To empty urls array
+    removeElementsByClass("image-view");
+    document.getElementById("tags").value = "";
 }
 
 //To extract the tag from input text
@@ -295,12 +295,13 @@ function teach() {
 
     // create FormData
     var formData = new FormData();
-    formData.append('operation', 'teach');
+    formData.append('action', 'teach');
+    formData.append('datatype', 'blob')
+    formData.append('data', JSON.stringify(urls));
     formData.append('tags', JSON.stringify(tags));
     formData.append('sent', sentiment);
-    formData.append('img', JSON.stringify(urls));
 
-    var uploadLocation = 'process.php';
+    var uploadLocation = 'API_call.php';
     var ajax = new XMLHttpRequest();
     ajax.open("POST", uploadLocation, true);
 
