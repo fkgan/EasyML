@@ -49,8 +49,6 @@
                 <a href="start.php?action=teach">Teach</a>
             </div>
         </div>
-        <div class="circle_red"></div>
-        <div class="circle_white"></div>
     </div>
 
     <footer>

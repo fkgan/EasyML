@@ -14,7 +14,13 @@ var // button to trigger the next step
     dropMessage = document.getElementById("drop-message"),
     // where images are previewed
     imagePreviewRegion = document.getElementById("image-preview"),
-    // file blob output
+    // where suggested tags will be shown
+    hint = document.getElementById('hint-text'),
+    // where user will input the their tags
+    tag_input = document.getElementById("tags"),
+    // timeout for hint request
+    timeout = null,
+    // where the blob data will be store
     urls = [];
 
 const MAX_STEPS = 4;
@@ -284,6 +290,57 @@ function tag_processing(text) {
 
     return tags;
 }
+
+// Listen for keystroke events and requests for hint (suggested tags)
+tag_input.addEventListener('keyup', function (e) {
+    // Clear the timeout if it has already been set.
+    // This will prevent the previous task from executing
+    // if it has been less than <MILLISECONDS>
+    clearTimeout(timeout);
+
+    if (tag_input.value != "") {
+        var tags = tag_processing(tag_input.value);
+
+        // Make a new timeout set to go off in 1000ms (1 second)
+        timeout = setTimeout(function () {
+            var formData = new FormData();
+            formData.append('action', 'hint');
+            formData.append('tags', tags);
+
+            var uploadLocation = 'API_call.php';
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", uploadLocation, true);
+
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState === 4) {
+                    if (ajax.status === 200) {
+                        // done!
+                        try {
+                            var obj = JSON.parse(ajax.responseText);
+                            if (obj['data']['suggested'].length > 0) {
+                                var formatedTags = obj['data']['suggested'].join(", ");
+                                hint.innerHTML = "Maybe you want to try <b>" + formatedTags + "</b>?";
+                            }
+                            else {
+                                hint.innerHTML = "Sorry, no suggested tags. Try to type more.";
+                            }
+                        } catch (e) {
+                            // if ajax.responseText is failed to parse to js object
+                            hint.innerHTML = ajax.responseText;
+                        }
+                    } else {
+                        // error!
+                        alert("Error on sending request to the server, please try again later.");
+                    }
+                }
+            }
+            ajax.send(formData);
+        }, 1500);
+    }
+    else {
+        hint.innerHTML = "Try to type something.";
+    }
+});
 
 function teach() {
     // Extracting the tags

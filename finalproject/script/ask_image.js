@@ -14,7 +14,13 @@ var // button to trigger the next step
     dropMessage = document.getElementById("drop-message"),
     // where images are previewed
     imagePreviewRegion = document.getElementById("image-preview"),
-    // file blob output
+    // where suggested tags will be shown
+    hint = document.getElementById('hint-text'),
+    // where user will input the their tags
+    tag_input = document.getElementById("tags"),
+    // timeout for hint request
+    timeout = null,
+    // where the blob data will be store
     urls = [];
 
 const MAX_STEPS = 2;
@@ -59,12 +65,27 @@ nextBtn.addEventListener('click', () => {
             nextStep();
         }
     }
+    // On step 2
     else if (currentStep == 2) {
         // Check if at least 1 tag is inserted
         if (!(document.getElementById("tags").value == "")) {
+            // create the view of the file on the last page
+            inputfiles = document.getElementById('input-files');
+            var imgView = document.createElement("div");
+            imgView.className = "input-view";
+            inputfiles.appendChild(imgView);
+
+            // append image to preview
+            for (var i = 0; i < urls.length; i++) {
+                var img = document.createElement("img");
+                imgView.appendChild(img);
+                img.src = urls[i];
+            }
+
             ask();  // send the data
             nextStep();
             backBtn.classList.add('hidden');    // hide the back button
+            nextBtn.classList.add('hidden');    // hide the next button
         }
         else {
             alert("Please enter at least 1 tag!");
@@ -74,26 +95,23 @@ nextBtn.addEventListener('click', () => {
 
 backBtn.addEventListener('click', () => {
     if (currentStep == 2) {
-        nextBtn.innerHTML = "<b>Next</b>";
         backBtn.classList.add("hidden");        // hide the back button
         browseBtn.classList.remove("hidden");   // show the browse button
     }
+
+    nextBtn.innerHTML = "<b>Next</b>";
     prevStep();
 });
-
 
 // Go to next step(page) when current step is done
 function nextStep() {
     steps[currentStep - 1].classList.add('done');
     steps[currentStep - 1].classList.remove('doing');
-
-    //the page change, but the step don't change anymore
-    //pages[currentStep - 1].classList.add('hidden');   // For the page 5 : Thank you
+    pages[currentStep - 1].classList.add('hidden');
+    pages[currentStep].classList.remove('hidden');
 
     if (currentStep < MAX_STEPS) {
         steps[currentStep].classList.add('doing');
-        pages[currentStep - 1].classList.add('hidden');
-        pages[currentStep].classList.remove('hidden');
     }
 
     currentStep += 1;
@@ -238,6 +256,57 @@ function tag_processing(text) {
     return tags;
 }
 
+// Listen for keystroke events and requests for hint (suggested tags)
+tag_input.addEventListener('keyup', function (e) {
+    // Clear the timeout if it has already been set.
+    // This will prevent the previous task from executing
+    // if it has been less than <MILLISECONDS>
+    clearTimeout(timeout);
+
+    if (tag_input.value != "") {
+        var tags = tag_processing(tag_input.value);
+
+        // Make a new timeout set to go off in 1000ms (1 second)
+        timeout = setTimeout(function () {
+            var formData = new FormData();
+            formData.append('action', 'hint');
+            formData.append('tags', tags);
+
+            var uploadLocation = 'API_call.php';
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", uploadLocation, true);
+
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState === 4) {
+                    if (ajax.status === 200) {
+                        // done!
+                        try {
+                            var obj = JSON.parse(ajax.responseText);
+                            if (obj['data']['suggested'].length > 0) {
+                                var formatedTags = obj['data']['suggested'].join(", ");
+                                hint.innerHTML = "Maybe you want to try <b>" + formatedTags + "</b>?";
+                            }
+                            else {
+                                hint.innerHTML = "Sorry, no suggested tags. Try to type more.";
+                            }
+                        } catch (e) {
+                            // if ajax.responseText is failed to parse to js object
+                            hint.innerHTML = ajax.responseText;
+                        }
+                    } else {
+                        // error!
+                        alert("Error on sending request to the server, please try again later.");
+                    }
+                }
+            }
+            ajax.send(formData);
+        }, 1500);
+    }
+    else {
+        hint.innerHTML = "Try to type something.";
+    }
+});
+
 function ask() {
     // Extracting the tags
     var text = document.getElementById("tags").value;
@@ -250,8 +319,7 @@ function ask() {
     formData.append('data', JSON.stringify(urls));
     formData.append('tags', JSON.stringify(tags));
 
-    //var uploadLocation = 'API_call.php';
-    var uploadLocation = 'process.php';
+    var uploadLocation = 'API_call.php';
     var ajax = new XMLHttpRequest();
     ajax.open("POST", uploadLocation, true);
 
@@ -259,7 +327,10 @@ function ask() {
         if (ajax.readyState === 4) {
             if (ajax.status === 200) {
                 // done!
-                console.log(ajax.responseText);
+                var obj = JSON.parse(ajax.responseText);
+                console.log(obj['msg']);
+                document.getElementById('tags-review').innerHTML = obj['tags'];
+                document.getElementById('input-sentiment').innerHTML = "Sentiment: " + obj['sentiment'];
             } else {
                 // error!
                 alert("Error on sending request to the server, please try again later.");

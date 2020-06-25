@@ -409,28 +409,6 @@ input#negative[type=radio]:checked + label>img{
     padding-bottom: 30px;
 }
 
-#pg5 .link-area{
-    margin-top: 50px;
-    margin-left: 10%;
-}
-
-#pg5 .link-area a:link, #pg5 .link-area a:visited{
-    background: #3C7CF1;
-    color: white;
-    border: 1px solid #3C7CF1;
-    border-radius: 5px;
-    padding: 12px 50px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 30px;
-}
-
-#pg5 .link-area a:hover{
-    background: #1865F2;
-    border: 1px solid #1865F2;
-}
-
 #cartoon-icon{
     position: absolute;
     bottom: 0px;
@@ -504,6 +482,33 @@ input#negative[type=radio]:checked + label>img{
     color: white;
 }
 
+/* link that styled as button in last page of both action */
+.link-area{
+    margin-top: 50px;
+    margin-left: 10%;
+}
+
+.link-area2{
+    margin-top: 35px;
+    float: right;
+}
+
+.link-area a:link, .link-area a:visited{
+    background: #3C7CF1;
+    color: white;
+    border: 1px solid #3C7CF1;
+    border-radius: 5px;
+    padding: 12px 50px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.link-area a:hover{
+    background: #1865F2;
+    border: 1px solid #1865F2;
+}
 
 
 /*  --- Responsive design ---  */

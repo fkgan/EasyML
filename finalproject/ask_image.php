@@ -82,6 +82,28 @@
                     <div id="hint-text">suggested tags will appear here</div>
                 </div>
             </div>
+
+            <div class="page hidden" id="pg4">
+                <div id="tips"><h3 class="underline-small">Here's what your machine thinks of</h3></div>
+                <div class="blackboard">
+                    <div class="blackboard-content">
+                        <div id="input-files">
+                            <h1>Images</h1>
+                        </div>
+                        <div id="next-column">
+                            <div id="input-tags">
+                                <h1>Tags</h1>
+                                <p id="tags-review"></p>
+                            </div>
+                            <div id="input-sentiment"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="link-area link-area2">
+                    <a href="start.php?action=ask">&nbsp;Ask&nbsp;</a>
+                    <a href="start.php?action=teach">Teach</a>
+                </div>
+            </div>
             
             <div class="button-area">
                 <button class="button hidden" id="backBtn"><b>Back</b></button>

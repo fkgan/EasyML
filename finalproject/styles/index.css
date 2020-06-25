@@ -1,4 +1,12 @@
-/* This is the content stylesheet of index.php */
+/* -index.php- */
+.content{
+    background-image: url('../resources/background.png');
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-size: 35%;
+    background-position: 100% 80%;
+}
+
 .text-holder{
     margin-top: 10%;
 }
@@ -26,35 +34,4 @@
 .text-holder a:hover{
     background: #1865F2;
     border: 1px solid #1865F2;
-}
-
-.circle_red{
-    position: absolute;
-    width: 35%;
-    background-color: rgba(255, 0, 0, 0.6);
-    border-radius: 50%;
-    bottom: 15%;
-    right: -10%;
-}
-
-.circle_red::before {
-    content: "";
-    display: block;
-    padding-top: 100%;
-}
-
-.circle_white{
-    position: absolute;
-    width: 35%;
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    right: 5%;
-    bottom: -25%;
-    z-index: -1;
-}
-
-.circle_white::before {
-    content: "";
-    display: block;
-    padding-top: 100%;
 }
