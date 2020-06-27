@@ -28,7 +28,7 @@ if (isset($_REQUEST["action"])){
 
         // When it is teaching only
         if ($_REQUEST["action"] == "teach"){
-            $dir = "api/train";         // API to teach/train the model
+            $dir = "api/train";                             // API to teach/train the model
             $obj->sentiment = $_REQUEST["sent"];
         }
 
@@ -49,7 +49,7 @@ if (isset($_REQUEST["action"])){
         // To get the user's model ID from DB
         $userID = $_SESSION['userID'];
         $query = "SELECT userOwnModelID FROM user_model WHERE userID=$userID";
-        $result = mysqli_query($db, $query);      //query the result from database
+        $result = mysqli_query($db, $query);       //query the result from database
         $user = mysqli_fetch_assoc($result);       //to access the result
 
         $obj->mid = $user['userOwnModelID'];

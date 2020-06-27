@@ -77,10 +77,6 @@
                     </div>
                     <textarea placeholder="Enter tags and split by ','" name="tags" id="tags" cols="40" rows="15"></textarea>
                 </div>
-                <div id="hint">
-                    <img src="resources/hintbot.png" alt="robot">
-                    <div id="hint-text">suggested tags will appear here</div>
-                </div>
             </div>
 
             <div class="page hidden" id="pg4">

@@ -78,8 +78,8 @@ if(isset($_POST['register'])){
   //Register the user if no error
   if(count($errors) == 0){
     $password = hash("sha512", $password_1); // this will encrypt the password using sha512
-    $query = "INSERT INTO $user_table (`firstName`, `lastName`, `username`, `password`, `registeredDate`, `lastLoginDate`) 
-    VALUES ('$fname', '$lname', '$username', '$password', CURRENT_DATE(), NOW());";
+    $query = "INSERT INTO $user_table (`firstName`, `lastName`, `username`, `password`, `email`, `registeredDate`, `lastLoginDate`) 
+    VALUES ('$fname', '$lname', '$username', '$password', '$email', CURRENT_DATE(), NOW());";
 
     // insert the new user information into database
     mysqli_query($db, $query);
