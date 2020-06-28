@@ -105,7 +105,10 @@ nextBtn.addEventListener('click', () => {
     // On step 2
     else if (currentStep == 2) {
         // Check if at least 1 tag is inserted
-        if (!(document.getElementById("tags").value == "")) {
+        var text = document.getElementById("tags").value;
+        var tags = tag_processing(text);
+
+        if (!(tags.length < 1)) {
             nextStep();
         }
         else {

@@ -4,10 +4,16 @@ var // button to trigger the next step
     backBtn = document.getElementById('backBtn'),
     // button to trigger windows file selector
     browseBtn = document.getElementById('browseBtn'),
+    // button to upload and send the image file for OCR
+    uploadBtn = document.getElementById('uploadBtn'),
     // the number of steps
     steps = [...document.querySelectorAll('.steps')],
     // access to the page of each step
     pages = [...document.querySelectorAll('.page')],
+    // where text area is placed for editing
+    textRegion = document.getElementById("text-region"),
+    // where user edit OCR return's text
+    ta = document.getElementById('text-area'),
     // where files are dropped + file selector is opened
     dropRegion = document.getElementById("drop-region"),
     // the drop message
@@ -42,6 +48,9 @@ nextBtn.addEventListener('click', () => {
         if (urls.length < 1) {
             alert("Please upload at least 1 image!");
         }
+        else if (ta.value == "") {
+            alert("Maybe you want to write some text before proceed?");
+        }
         else {
             // Prepare the file preview in page 2
             if (urls.length == 1) {
@@ -69,7 +78,10 @@ nextBtn.addEventListener('click', () => {
     // On step 2
     else if (currentStep == 2) {
         // Check if at least 1 tag is inserted
-        if (!(document.getElementById("tags").value == "")) {
+        var text = document.getElementById("tags").value;
+        var tags = tag_processing(text);
+
+        if (!(tags.length < 1)) {
             nextStep();
         }
         else {
@@ -137,6 +149,53 @@ backBtn.addEventListener('click', () => {
     prevStep();
 });
 
+// On click, call api to retrieve OCR's text
+uploadBtn.addEventListener('click', function () {
+    if (urls.length > 0) {
+        // create FormData
+        var formData = new FormData();
+        formData.append('action', 'ocr');
+        formData.append('datatype', 'blob');
+        formData.append('data', JSON.stringify(urls));
+
+        var uploadLocation = 'API_call.php';
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", uploadLocation, true);
+
+        ajax.onreadystatechange = function () {
+            if (ajax.readyState === 4) {
+                if (ajax.status === 200) {
+                    // done!
+                    // disable and hide the upload button
+                    uploadBtn.disabled = true;
+                    uploadBtn.classList.add('hidden');
+
+                    try {
+                        // Convert json string to js object to output the return value
+                        var obj = JSON.parse(ajax.responseText);
+                        console.log(obj['status']['error']);
+                        ta.value = obj["data"]["ocrtext"];
+                        document.getElementById('pg1-tips').innerHTML = "Edit the content on the image to help your machine understand better";
+                        dropRegion.classList.add('hidden');
+                        textRegion.classList.remove('hidden');
+                        nextBtn.classList.remove('hidden');         // display the next button
+                    } catch (e) {
+                        // if ajax.responseText is failed to parse to js object
+                        console.log(ajax.responseText);
+                    }
+                } else {
+                    // error!
+                    alert("Error on sending request to the server, please try again later.");
+                }
+            }
+        }
+        ajax.send(formData);
+    }
+    else {
+        alert("Please upload at least 1 image.");
+    }
+});
+
 
 // Proceed to next step(page)
 function nextStep() {
@@ -179,8 +238,24 @@ dropRegion.addEventListener('click', function () {
 });
 
 browseBtn.addEventListener('click', function () {
-    reset();
+    if (ta.value != "") {
+        var response = confirm("Are you sure you want to upload another image? Your existing text will be clear away.");
+        if (response == true) {
+            textRegion.classList.add('hidden');
+            document.getElementById('pg1-tips').innerHTML = "Upload your text(s) in image format.";
+            dropRegion.classList.remove('hidden');
+            uploadBtn.disabled = false;
+            uploadBtn.classList.remove('hidden');
+            ta.value = "";
+            nextBtn.classList.add('hidden');
+        }
+        else {
+            return;
+        }
+    }
+
     input.click();
+    reset();
 });
 
 input.addEventListener("change", function () {
@@ -353,8 +428,8 @@ function teach() {
     // create FormData
     var formData = new FormData();
     formData.append('action', 'teach');
-    formData.append('datatype', 'blob')
-    formData.append('data', JSON.stringify(urls));
+    formData.append('datatype', 'text')
+    formData.append('data', JSON.stringify(ta.value));
     formData.append('tags', JSON.stringify(tags));
     formData.append('sent', sentiment);
 

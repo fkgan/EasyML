@@ -47,7 +47,7 @@ if(isset($_POST['login'])){
 
 // Register user
 if(isset($_POST['register'])){
-  //removing all escape characters from input to avoid SQL injection
+  // removing all escape characters from input to avoid SQL injection
   $username = mysqli_real_escape_string($db, $_POST['username']);
   $email = mysqli_real_escape_string($db, $_POST['email']);
   $fname = mysqli_real_escape_string($db, $_POST['fname']);
@@ -84,14 +84,50 @@ if(isset($_POST['register'])){
     // insert the new user information into database
     mysqli_query($db, $query);
 
+    /*
+    // call register api to build the ML model for user
+    $url = "http://110.159.177.152:5000/";                  // API Url
+    $dir = "api/register";                                  // API to ask for retraining
+
+    if (!isset($obj))
+        $obj = new stdClass();
+    $obj->API_key = $API_key;
+    $obj->username =  $_SESSION['username'];
+    $obj->userpw = $_SESSION['password'];
+    $obj->action = "ask";
+
+    // encode the js object into json string
+    $JSON_data = json_encode($obj);
+
+    // create a stream
+    $params = array('http' => array(
+        'header' => "Content-Type: application/json",
+        'method' => 'POST',
+        'content' => $JSON_data
+    ));
+
+    $context = stream_context_create($params);
+
+    // Read the content of the url using the HTTP headers set above as string
+    $file = file_get_contents($url.$dir, false, $context);
+
+    if (!$file) {
+        throw new Exception("Problem with $url, $php_errormsg");
+    }
+
+    // todo: what to do with the returning message $file
+    */
+
     // redirect user to log in now
     echo "<script type='text/javascript'>
     alert('Sucessfully registered! You can log in now');
     window.location.href='login.php';
     </script>";
-
-    //header('Location: login.php');
   }
+}
+
+api_call(){
+  $url = "http://110.159.177.152:5000/";
 }
 
 ?>

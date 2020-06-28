@@ -63,6 +63,51 @@ if (isset($_REQUEST["action"])){
         // build the get query
         $dir = "api/suggestedTags?" . http_build_query($obj);
     }
+    if ($_REQUEST["action"] == "retrain"){
+        $dir = "api/retrain";    // API to ask for retraining
+        // change the content-type header to json file
+        $optional_headers = "Content-Type: application/json";
+
+        // Data to send
+        $obj->API_key = $API_key;
+        $obj->username =  $_SESSION['username'];
+        $obj->userpw = $_SESSION['password'];
+        $obj->action = $_REQUEST["action"];
+        $obj->data = json_decode($_REQUEST["data"]);
+
+        // encode the js object into json string
+        $JSON_data = json_encode($obj);
+
+        // create a stream
+        $params = array('http' => array(
+            'method' => 'PUT',
+            'content' => $JSON_data
+        ));
+    }
+    // If action is ocr
+    if ($_REQUEST["action"] == "ocr"){
+        $dir = "api/ocr";    // API to ask for prediction
+        // change the content-type header to json file
+        $optional_headers = "Content-Type: application/json";
+
+        // Data to send
+        $obj->API_key = $API_key;
+        $obj->username =  $_SESSION['username'];
+        $obj->userpw = $_SESSION['password'];
+        $obj->action = $_REQUEST["action"];
+        $obj->datatype = $_REQUEST["datatype"];
+        $obj->data = json_decode($_REQUEST["data"]);
+        
+        // encode the js object into json string
+        $JSON_data = json_encode($obj);
+
+        // create a stream
+        $params = array('http' => array(
+            'method' => 'POST',
+            'content' => $JSON_data
+        ));
+    }
+
 
     if ($optional_headers !== null) {
         $params['http']['header'] = $optional_headers;

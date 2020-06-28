@@ -88,7 +88,7 @@
 /* --- progressing pages section --- */
 /* page 1: file upload */
 #pg1{
-    padding-top: 50px;
+    text-align: center;
 }
 
 #drop-region {
@@ -154,10 +154,25 @@
     border-radius: 12px;
 }
 
+#text-region{
+    position: relative;
+    margin: auto;
+	background-color: white;
+	border-radius: 25px;
+	border-style: dashed;
+    border-color: #B896FC;
+	box-shadow: 0 0 35px rgba(0,0,0,0.05);
+	width: 60%;
+	height: 450px;
+	overflow-x: auto;
+	text-align: center;
+	transition: .3s;
+}
+
 #text-area {                        /* the text area to edit or input text */
     position: absolute;
     top: 1%;
-    left: 2%;
+    left: 3%;
     padding: 10px;
     resize: none;
     width: 90%;
@@ -168,6 +183,8 @@
     outline: none !important;
     z-index: 1;
 }
+
+
 
 /* page 2: tags-input */
 #pg2{
@@ -428,7 +445,7 @@ input#negative[type=radio]:checked + label>img{
     outline: 0 !important;  /* Remove the outline of the button when clicked */
 }
 
-#nextBtn{
+#nextBtn, #uploadBtn{
     border: 2px solid #4CAF50;
     border-radius: 12px;
     padding: 12px 48px;
@@ -436,7 +453,7 @@ input#negative[type=radio]:checked + label>img{
     cursor: pointer;
 }
 
-#nextBtn:hover{
+#nextBtn:hover, #uploadBtn:hover{
     background-color: #4CAF50;
     color: white;
 }

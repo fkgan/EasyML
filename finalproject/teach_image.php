@@ -54,12 +54,16 @@
         </div>
         <div class="content-border">
             <div class="page" id="pg1">
+                <h3 class="underline-small" id="pg1-tips">Upload your text(s) in image format.</h3>
                 <div id="drop-region">
                     <div class="drop-message" id="drop-message">
                         <img src="resources/upload.png" alt="">
                         <p><span class="hl-deepblue">Drag & Drop</span> files here <br>or<br> <span class=underlined>click</span> to browse</p>
                     </div>
                     <div id="image-preview"></div>
+                </div>
+                <div class="hidden" id="text-region">
+                    <textarea id="text-area"></textarea>
                 </div>
             </div>
 
@@ -124,7 +128,8 @@
             <div class="button-area">
                 <button class="button hidden" id="backBtn"><b>Back</b></button>
                 <button class="button" id="browseBtn"><b>Browse</b></button>
-                <button class="button" id="nextBtn"><b>Next</b></button>
+                <button class="button" id="uploadBtn"><b>Upload</b></button>
+                <button class="button hidden" id="nextBtn"><b>Next</b></button>
             </div>
         </div>
     </div>

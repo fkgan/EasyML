@@ -84,6 +84,9 @@
                             echo "</td>";
                         echo "</tr>";
                     }
+                    echo "<tr>";
+                        echo "<td><a href='#' onclick='submit_data();' class='btn-save'>Submit</a></td>";
+                    echo "</tr>";
                 }
                 // if no records found
                 else{

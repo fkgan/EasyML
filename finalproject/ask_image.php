@@ -59,6 +59,7 @@
         </div>
         <div class="content-border">
             <div class="page" id="pg1">
+                <h3 class="underline-small" id="pg1-tips">Upload your text(s) in image format.</h3>
                 <div id="drop-region">
                     <div class="drop-message" id="drop-message">
                         <img src="resources/upload.png" alt="">
@@ -66,10 +67,13 @@
                     </div>
                     <div id="image-preview"></div>
                 </div>
+                <div class="hidden" id="text-region">
+                    <textarea id="text-area"></textarea>
+                </div>
             </div>
 
             <div class="page hidden" id="pg2">
-                <h3 class="underline-small">Insert the corresponding tags related to the uploaded content</h3>
+                <div class="tips"><h3 class="underline-small">Insert the corresponding tags related to the uploaded content</h3></div>
                 <div class="grid-container">
                     <div class="pg2-preview">
                         <img id="pg2-img" alt="image-preview"></img>
@@ -80,7 +84,7 @@
             </div>
 
             <div class="page hidden" id="pg4">
-                <div id="tips"><h3 class="underline-small">Here's what your machine thinks of</h3></div>
+                <div class="tips"><h3 class="underline-small">Here's what your machine thinks of</h3></div>
                 <div class="blackboard">
                     <div class="blackboard-content">
                         <div id="input-files">
@@ -104,7 +108,8 @@
             <div class="button-area">
                 <button class="button hidden" id="backBtn"><b>Back</b></button>
                 <button class="button" id="browseBtn"><b>Browse</b></button>
-                <button class="button" id="nextBtn"><b>Next</b></button>
+                <button class="button" id="uploadBtn"><b>Upload</b></button>
+                <button class="button hidden" id="nextBtn"><b>Next</b></button>
             </div>
             
             

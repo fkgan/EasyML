@@ -100,7 +100,10 @@ nextBtn.addEventListener('click', () => {
     // On step 2
     else if (currentStep == 2) {
         // Check if at least 1 tag is inserted
-        if (!(document.getElementById("tags").value == "")) {
+        var text = document.getElementById("tags").value;
+        var tags = tag_processing(text);
+
+        if (!(tags.length < 1)) {
             // create the view of the file on the last page
             inputfiles = document.getElementById('input-files');
             var txtView = document.createElement("div");

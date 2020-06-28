@@ -199,6 +199,17 @@ body{
     opacity: 0.8;
 }
 
+.btn-save{
+    color: white;
+    background: #5465f8;
+    border: 1px solid #5465f8;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    text-decoration: none;
+    opacity: 0.8;
+}
+
 .model-settings .btn-del:hover{
     opacity: 1;
 }

@@ -53,6 +53,7 @@
         </div>
         <div class="content-border">
             <div class="page" id="pg1">
+                <h3 class="underline-small" id="pg1-tips">Upload your text file(s) or type it out.</h3>
                 <div id="drop-region">
                     <textarea id="text-area"></textarea>
                     <div class="drop-message" id="drop-message">
