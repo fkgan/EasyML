@@ -4,8 +4,9 @@ session_start();
 // include database connection
 include('config/db_connect.php');
 
-// Initialize variable
+// Initialize variable to store the error message
 $errors = array();
+$php_errormsg = "";
 
 //Login user
 if(isset($_POST['login'])){
@@ -72,36 +73,34 @@ if(isset($_POST['register'])){
 
   if($user){
     if ($user['username'] == $username)(array_push($errors, "Username already exists"));
-    //if ($user['email'] == $email)(array_push($errors, "The email has been registered"));
+    if ($user['email'] == $email)(array_push($errors, "The email has been registered"));
   }
 
   //Register the user if no error
   if(count($errors) == 0){
     $password = hash("sha512", $password_1); // this will encrypt the password using sha512
-    $query = "INSERT INTO $user_table (`firstName`, `lastName`, `username`, `password`, `email`, `registeredDate`, `lastLoginDate`) 
-    VALUES ('$fname', '$lname', '$username', '$password', '$email', CURRENT_DATE(), NOW());";
-
-    // insert the new user information into database
-    mysqli_query($db, $query);
-
-    /*
     // call register api to build the ML model for user
     $url = "http://110.159.177.152:5000/";                  // API Url
-    $dir = "api/register";                                  // API to ask for retraining
+    $dir = "api/registration";                              // API to ask for register
+    $API_key = 'AMQI6w9oOb-bqH-9OVTIqurJ';                  // API_key
+    $optional_headers = "Content-Type: application/json";
 
     if (!isset($obj))
         $obj = new stdClass();
     $obj->API_key = $API_key;
-    $obj->username =  $_SESSION['username'];
-    $obj->userpw = $_SESSION['password'];
-    $obj->action = "ask";
+    $obj->action = "register";
+    $obj->username =  $username;
+    $obj->userpw = $password;
+    $obj->email = $email;
+    $obj->firstname = $fname;
+    $obj->lastname = $lname;
 
     // encode the js object into json string
     $JSON_data = json_encode($obj);
 
     // create a stream
     $params = array('http' => array(
-        'header' => "Content-Type: application/json",
+        'header' => $optional_headers,
         'method' => 'POST',
         'content' => $JSON_data
     ));
@@ -112,22 +111,16 @@ if(isset($_POST['register'])){
     $file = file_get_contents($url.$dir, false, $context);
 
     if (!$file) {
-        throw new Exception("Problem with $url, $php_errormsg");
+      die("Problem with $url, $php_errormsg");
     }
-
-    // todo: what to do with the returning message $file
-    */
-
-    // redirect user to log in now
-    echo "<script type='text/javascript'>
-    alert('Sucessfully registered! You can log in now');
-    window.location.href='login.php';
-    </script>";
+    else{
+      // redirect user to log in now
+      echo "<script type='text/javascript'>
+      alert('Sucessfully registered! You can log in now');
+      window.location.href='login.php';
+      </script>";
+    }
   }
-}
-
-api_call(){
-  $url = "http://110.159.177.152:5000/";
 }
 
 ?>
