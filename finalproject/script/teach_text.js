@@ -35,7 +35,7 @@ let currentStep = 1;
 // before exiting the page
 window.onbeforeunload = function () {
     // if user has uploaded anything, or has done asking
-    if (urls.length > 0 && ta.value == "" && currentStep != 3) {
+    if (urls.length > 0 && ta.value == "" && currentStep != 5) {
         return 'Changes you made may not be saved.';
     }
 };
@@ -163,9 +163,6 @@ nextBtn.addEventListener('click', () => {
     // On step 4
     else if (currentStep == 4) {
         teach();                            // sending data to server
-        nextStep();                         // proceed to done
-        backBtn.classList.add('hidden');    // hide the back button
-        nextBtn.classList.add('hidden');    // hide the next button
     }
 });
 
@@ -390,7 +387,8 @@ function reset() {
 // Encoding string data into base64 blob data
 function encodeToBase64(string, type) {
     var type = "data:" + type + ";base64,";
-    return type + btoa(string);
+    return type + btoa(unescape(encodeURIComponent(string)));
+    //return type + btoa(string);       // doesn't work for characters outside latin-1 range
 }
 
 //To extract the tag from input text
@@ -440,15 +438,18 @@ tag_input.addEventListener('keyup', function (e) {
                                 hint.innerHTML = "Maybe you want to try <b>" + formatedTags + "</b>?";
                             }
                             else {
-                                hint.innerHTML = "Sorry, no suggested tags. Try to type more.";
+                                hint.innerHTML = "No suggested tags. Continue teaching or try to type more.";
                             }
                         } catch (e) {
                             // if ajax.responseText is failed to parse to js object
-                            hint.innerHTML = ajax.responseText;
+                            hint.innerHTML = "Server is not responding right now. Please try again later.";
+                            console.log(ajax.responseText);
                         }
                     } else {
                         // error!
+                        steps[currentStep - 1].classList.add('fail');
                         alert("Error on sending request to the server, please try again later.");
+                        onErrorPageChange();
                     }
                 }
             }
@@ -460,7 +461,18 @@ tag_input.addEventListener('keyup', function (e) {
     }
 });
 
+function onErrorPageChange() {
+    steps[currentStep - 1].classList.add('fail');
+    pages[currentStep - 1].classList.add('hidden');
+    document.getElementById('page_error').classList.remove('hidden');   // show error page
+}
+
 function teach() {
+    // perform some changes on UI
+    backBtn.classList.add('hidden');    // hide the back button
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = "<b><span id='processing'></span></b>";
+
     // Extracting the tags
     var text = document.getElementById("tags").value;
     var tags = tag_processing(text);
@@ -493,11 +505,32 @@ function teach() {
         if (ajax.readyState === 4) {
             if (ajax.status === 200) {
                 // done!
-                console.log(ajax.responseText);
+                try {
+                    // If system return a JSON response
+                    var obj = JSON.parse(ajax.responseText);
+                    // Check the process status
+                    if (obj['status']['error'] == false) {
+                        console.log(obj['status']['message']);
+                        nextStep();                         // proceed to done
+                    }
+                    else {
+                        // server fails to give success as response
+                        console.log("Server error: ", ajax.responseText);
+                        onErrorPageChange();
+                    }
+                } catch (e) {
+                    // If system didn't return JSON response
+                    console.log("Caught exception: ", e);
+                    console.log("Server error: ", ajax.responseText);
+                    onErrorPageChange();
+                }
             } else {
                 // error!
+                steps[currentStep - 1].classList.add('fail');
                 alert("Error on sending request to the server, please try again later.");
+                onErrorPageChange();
             }
+            nextBtn.classList.add('hidden');    // hide the next button
         }
     }
 

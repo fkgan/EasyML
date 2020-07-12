@@ -83,6 +83,29 @@
     top:12px;
 }
 
+#processing:before{
+	content: '';
+    animation: process infinite 2s;
+}
+
+@keyframes process{
+	0%{
+    	content: 'Processing';
+    }
+    30%{
+    	content: 'Processing.';
+    }
+    60%{
+    	content: 'Processing..';
+    }
+    90%{
+    	content: 'Processing...';
+    }
+    100%{
+    	content: 'Processing';
+    }
+}
+
 
 
 /* --- progressing pages section --- */
@@ -434,6 +457,13 @@ input#negative[type=radio]:checked + label>img{
     height: 18em;
 }
 
+/* error page */
+#page_error{
+    margin: auto;
+    min-height: 250px;
+    padding: 5%;
+}
+
 /*  Buttons  */
 .button-area{
     position: absolute;
@@ -445,7 +475,7 @@ input#negative[type=radio]:checked + label>img{
     outline: 0 !important;  /* Remove the outline of the button when clicked */
 }
 
-#nextBtn, #uploadBtn{
+#nextBtn, #uploadBtn, #homeBtn{
     border: 2px solid #4CAF50;
     border-radius: 12px;
     padding: 12px 48px;
@@ -453,7 +483,7 @@ input#negative[type=radio]:checked + label>img{
     cursor: pointer;
 }
 
-#nextBtn:hover, #uploadBtn:hover{
+#nextBtn:hover, #uploadBtn:hover, #homeBtn:hover{
     background-color: #4CAF50;
     color: white;
 }

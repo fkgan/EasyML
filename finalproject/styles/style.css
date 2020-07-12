@@ -189,20 +189,12 @@ body{
 }
 
 .model-settings .btn-del{
+    position:fixed;
+    right:3.5%;
+    bottom:3.5%;
     color: white;
     background: #d43f3a;
     border: 1px solid #d43f3a;
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 14px;
-    text-decoration: none;
-    opacity: 0.8;
-}
-
-.btn-save{
-    color: white;
-    background: #5465f8;
-    border: 1px solid #5465f8;
     border-radius: 4px;
     padding: 6px 12px;
     font-size: 14px;
@@ -225,6 +217,11 @@ body{
     padding: .75rem 1.25rem;
     margin-bottom: 1rem;
     border-radius: .25rem;
+}
+
+input[type=checkbox]#center_big{
+    width: 25px;
+    height: 25px;
 }
 
 

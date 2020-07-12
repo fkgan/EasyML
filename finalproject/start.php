@@ -8,6 +8,7 @@
 
     if ($_GET['action'] == "ask"){
         $link = 'ask';
+        include('config/ask_check.php');    // Check if user eligible to ask
     }
     else if ($_GET['action'] == "teach"){
         $link = 'teach';

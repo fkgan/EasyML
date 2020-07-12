@@ -1,4 +1,7 @@
-<?php include('config/login_check.php');  // Make sure user is logged in ?>
+<?php 
+    include('config/login_check.php');  // Make sure user is logged in 
+    include('config/ask_check.php');    // Check if user eligible to ask
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -102,6 +105,16 @@
                 <div class="link-area link-area2">
                     <a href="start.php?action=ask">&nbsp;Ask&nbsp;</a>
                     <a href="start.php?action=teach">Teach</a>
+                </div>
+            </div>
+
+            <div class="page hidden" id="page_error">
+                <h1>Sorry!</h1>
+                <h3>Fail to retrieve response from the server. Server might not be available now. Please try again later.
+                    If the error continues, you might want to contact a server administrator for a fix.</h3>
+                <img id="cartoon-icon" src='resources/sorry.png' alt="sorry">
+                <div class="button-area">
+                    <button class="button" id="homeBtn" onclick="window.location.href = 'index.php'"><b>Back To Home</b></button>
                 </div>
             </div>
             

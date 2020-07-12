@@ -3,7 +3,7 @@ session_start();
 
 if (isset($_REQUEST["action"])){
     //Define variables
-    $url = "http://110.159.177.152:5000/";                  // API Url
+    $url = "http://175.136.61.41:5000/";                  // API Url
     $API_key = 'AMQI6w9oOb-bqH-9OVTIqurJ';                  // Website API Key for POST request
     $optional_headers = NULL;                               // required header
     $dir = "";                                              // directory to desired API url
@@ -12,6 +12,7 @@ if (isset($_REQUEST["action"])){
     if (!isset($obj))
         $obj = new stdClass();
 
+    // If requested action is ask or teach
     if ($_REQUEST["action"] == "ask" || $_REQUEST["action"] == "teach"){
         $dir = "api/predict";    // API to ask for prediction
         // change the content-type header to json file
@@ -54,6 +55,7 @@ if (isset($_REQUEST["action"])){
 
         $obj->mid = $user['userOwnModelID'];
         $obj->tags = $_REQUEST["tags"];
+        $obj->howMany = 5;
 
         // create a stream
         $params = array('http' => array(
@@ -107,7 +109,6 @@ if (isset($_REQUEST["action"])){
             'content' => $JSON_data
         ));
     }
-
 
     if ($optional_headers !== null) {
         $params['http']['header'] = $optional_headers;

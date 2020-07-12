@@ -121,6 +121,17 @@
                 <img id="cartoon-icon" src='resources/robot.png' alt="robot">
             </div>
             
+            <div class="page hidden" id="page_error">
+                <h1>Sorry!</h1>
+                <h3>Fail to retrieve response from the server. Server might not be available now. Please try again later.
+                    If the error continues, you might want to contact a server administrator for a fix.
+                </h3>
+                <img id="cartoon-icon" src='resources/sorry.png' alt="sorry">
+                <div class="button-area">
+                    <button class="button" id="homeBtn" onclick="window.location.href = 'index.php'"><b>Back To Home</b></button>
+                </div>
+            </div>
+
             <div class="button-area">
                 <button class="button hidden" id="editBtn"><b>Edit</b></button>
                 <button class="button hidden" id="backBtn"><b>Back</b></button>

@@ -109,7 +109,11 @@ backBtn.addEventListener('click', () => {
 // On click, call api to retrieve OCR's text
 uploadBtn.addEventListener('click', function () {
     if (urls.length > 0) {
-        // todo: OCR here
+        // perform some changes on UI
+        browseBtn.disabled = true;
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = "<b><span id='processing'></span></b>";
+
         // create FormData
         var formData = new FormData();
         formData.append('action', 'ocr');
@@ -124,36 +128,46 @@ uploadBtn.addEventListener('click', function () {
             if (ajax.readyState === 4) {
                 if (ajax.status === 200) {
                     // done!
-                    // disable and hide the upload button
-                    uploadBtn.disabled = true;
-                    uploadBtn.classList.add('hidden');
-
+                    uploadBtn.classList.add('hidden');  // hide the upload button
                     try {
+                        // If system return a JSON response
                         // Convert json string to js object to output the return value
                         var obj = JSON.parse(ajax.responseText);
-                        console.log(obj['status']['error']);
-                        ta.value = obj["data"]["ocrtext"];
-                        document.getElementById('pg1-tips').innerHTML = "Edit the content on the image to help your machine understand better";
-                        dropRegion.classList.add('hidden');
-                        textRegion.classList.remove('hidden');
-                        nextBtn.classList.remove('hidden');         // display the next button
+
+                        // Check the process status
+                        if (obj['status']['error'] == false) {
+                            console.log(obj['status']['message']);
+                            ta.value = obj["data"]["ocrtext"];
+                            document.getElementById('pg1-tips').innerHTML = "Edit the content on the image to help your machine understand better";
+                            dropRegion.classList.add('hidden');
+                            textRegion.classList.remove('hidden');
+                            browseBtn.disabled = false;
+                            nextBtn.classList.remove('hidden');         // display the next button
+                        }
+                        else {
+                            // server fails to give success as response
+                            console.log("Server error: ", ajax.responseText);
+                            onErrorPageChange();
+                        }
                     } catch (e) {
-                        // if ajax.responseText is failed to parse to js object
-                        console.log(ajax.responseText);
+                        // If system didn't return JSON response
+                        console.log("Caught exception: ", e);
+                        console.log("Server error: ", ajax.responseText);
+                        onErrorPageChange();
                     }
                 } else {
                     // error!
+                    steps[currentStep - 1].classList.add('fail');
                     alert("Error on sending request to the server, please try again later.");
+                    onErrorPageChange();
                 }
             }
         }
-
         ajax.send(formData);
     }
     else {
         alert("Please upload at least 1 image.");
     }
-
 });
 
 // Go to next step(page) when current step is done
@@ -196,20 +210,18 @@ dropRegion.addEventListener('click', function () {
 });
 
 browseBtn.addEventListener('click', function () {
-    if (ta.value != "") {
-        var response = confirm("Are you sure you want to upload another image? Your existing text will be clear away.");
-        if (response == true) {
-            textRegion.classList.add('hidden');
-            document.getElementById('pg1-tips').innerHTML = "Upload your text(s) in image format.";
-            dropRegion.classList.remove('hidden');
-            uploadBtn.disabled = false;
-            uploadBtn.classList.remove('hidden');
-            ta.value = "";
-            nextBtn.classList.add('hidden');
-        }
-        else {
-            return;
-        }
+    var response = confirm("Are you sure you want to upload another image? Your existing text will be clear away.");
+    if (response == true) {
+        textRegion.classList.add('hidden');
+        document.getElementById('pg1-tips').innerHTML = "Upload your text(s) in image format.";
+        dropRegion.classList.remove('hidden');
+        uploadBtn.disabled = false;
+        uploadBtn.classList.remove('hidden');
+        ta.value = "";
+        nextBtn.classList.add('hidden');
+    }
+    else {
+        return;
     }
 
     input.click();
@@ -306,6 +318,7 @@ function removeElementsByClass(className) {
 function reset() {
     urls = [];      // To empty urls array
     removeElementsByClass("image-view");
+    uploadBtn.innerHTML = "<b>Upload</b>";
     document.getElementById("tags").value = "";
 }
 
@@ -325,7 +338,21 @@ function tag_processing(text) {
     return tags;
 }
 
+function onErrorPageChange() {
+    // hide buttonS
+    browseBtn.classList.add('hidden');
+
+    steps[currentStep - 1].classList.add('fail');
+    pages[currentStep - 1].classList.add('hidden');
+    document.getElementById('page_error').classList.remove('hidden');   // show error page
+}
+
 function ask() {
+    // perform some changes on UI
+    backBtn.classList.add('hidden');    // hide the back button
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = "<b><span id='processing'></span></b>";
+
     // Extracting the tags
     var text = document.getElementById("tags").value;
     var tags = tag_processing(text);
@@ -346,25 +373,38 @@ function ask() {
             if (ajax.status === 200) {
                 // done!
                 try {
+                    // If system return a JSON response
                     var obj = JSON.parse(ajax.responseText);
-                    console.log(obj['status']);
-                    if (obj['data']['suggested'] != "")
-                        document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
-                    else
-                        document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
+                    // Check the process status
+                    if (obj['status']['error'] == false) {
+                        console.log(obj['status']['message']);
+                        if (obj['data']['suggested'] != "") {
+                            document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
+                        } else {
+                            document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
+                        }
 
-                    document.getElementById('input-sentiment').innerHTML = "Sentiment: " + obj['data']['predictedSentiment'];
-                    nextStep();
-                    backBtn.classList.add('hidden');    // hide the back button
-                    nextBtn.classList.add('hidden');    // hide the next button
+                        document.getElementById('input-sentiment').innerHTML = "Sentiment: " + obj['data']['predictedSentiment'];
+                        nextStep();
+                    }
+                    else {
+                        // server fails to give correct response
+                        console.log("Server error: ", ajax.responseText);
+                        onErrorPageChange();
+                    }
                 } catch (e) {
-                    // if ajax.responseText is failed to parse to js object
-                    console.log(ajax.responseText);
+                    // If system didn't return JSON response
+                    console.log("Caught exception: ", e);
+                    console.log("Server error: ", ajax.responseText);
+                    onErrorPageChange();
                 }
             } else {
                 // error!
+                steps[currentStep - 1].classList.add('fail');
                 alert("Error on sending request to the server, please try again later.");
+                onErrorPageChange();
             }
+            nextBtn.classList.add('hidden');    // hide the next button
         }
     }
 

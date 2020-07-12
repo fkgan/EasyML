@@ -56,15 +56,16 @@
             }
 
             ?>
-
+            <a href='#' onclick='delete_data();' class='btn-del'>Delete</a>
             <table>
             <tr>
+                <th>Selected</th>
                 <th>No.</th>
                 <th style="width: 55%;">Data</th>
                 <th>Tags</th>
                 <th>Sentiment</th>
                 <th>Date Trained</th>
-                <th>Action</th>
+                
             </tr>
             <?php
                 // check if more than 0 record found
@@ -74,19 +75,16 @@
                         extract($row);
                         $counter += 1;
                         echo "<tr>";
+                            echo "<td style='text-align: center'>";
+                                echo "<input type='checkbox' id='center_big' value='{$trainingID}'>";
+                            echo "</td>";
                             echo "<td>{$counter}</td>";
                             echo "<td>{$rawTextData}</td>";
                             echo "<td>{$tags}</td>";
                             echo "<td>{$sentiment}</td>";
                             echo "<td>{$dateTrained}</td>";
-                            echo "<td>";
-                                echo "<a href='#' onclick='delete_data({$trainingID});'  class='btn-del'>Delete</a>";
-                            echo "</td>";
                         echo "</tr>";
                     }
-                    echo "<tr>";
-                        echo "<td><a href='#' onclick='submit_data();' class='btn-save'>Submit</a></td>";
-                    echo "</tr>";
                 }
                 // if no records found
                 else{

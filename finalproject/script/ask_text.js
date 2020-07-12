@@ -343,7 +343,8 @@ function reset() {
 // Encoding string data into base64 blob data
 function encodeToBase64(string, type) {
     var type = "data:" + type + ";base64,";
-    return type + btoa(string);
+    return type + btoa(unescape(encodeURIComponent(string)));
+    //return type + btoa(string);       // doesn't work for characters outside latin-1 range
 }
 
 //To extract the tag from input text
@@ -362,7 +363,18 @@ function tag_processing(text) {
     return tags;
 }
 
+function onErrorPageChange() {
+    steps[currentStep - 1].classList.add('fail');
+    pages[currentStep - 1].classList.add('hidden');
+    document.getElementById('page_error').classList.remove('hidden');   // show error page
+}
+
 function ask() {
+    // perform some changes on UI
+    backBtn.classList.add('hidden');    // hide the back button
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = "<b><span id='processing'></span></b>";
+
     // Extracting the tags
     var text = document.getElementById("tags").value;
     var tags = tag_processing(text);
@@ -376,7 +388,7 @@ function ask() {
         formData.append('datatype', 'text');
         formData.append('data', JSON.stringify(ta.value));
         // encode to blob instead
-        //formData.append('files', JSON.stringify(encodeToBase64(ta.value, 'text/plain')));
+        // formData.append('files', JSON.stringify(encodeToBase64(ta.value, 'text/plain')));
     }
     else if (urls.length > 0) {
         formData.append('datatype', 'blob')
@@ -392,25 +404,39 @@ function ask() {
             if (ajax.status === 200) {
                 // done!
                 try {
+                    // If system return a JSON response
                     var obj = JSON.parse(ajax.responseText);
-                    console.log(obj['status']);
-                    if (obj['data']['suggested'] != "")
-                        document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
-                    else
-                        document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
+                    // Check the process status
+                    if (obj['status']['error'] == false) {
+                        console.log(obj['status']['message']);
+                        if (obj['data']['suggested'] != "") {
+                            document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
+                        }
+                        else {
+                            document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
+                        }
 
-                    document.getElementById('input-sentiment').innerHTML = "Sentiment: " + obj['data']['predictedSentiment'];
-                    nextStep();
-                    backBtn.classList.add('hidden');    // hide the back button
-                    nextBtn.classList.add('hidden');    // hide the next button
+                        document.getElementById('input-sentiment').innerHTML = "Sentiment: " + obj['data']['predictedSentiment'];
+                        nextStep();
+                    }
+                    else {
+                        // server fails to give success as response
+                        console.log("Server error: ", ajax.responseText);
+                        onErrorPageChange();
+                    }
                 } catch (e) {
-                    // if ajax.responseText is failed to parse to js object
-                    console.log(ajax.responseText);
+                    // If system didn't return JSON response
+                    console.log("Caught exception: ", e);
+                    console.log("Server error: ", ajax.responseText);
+                    onErrorPageChange();
                 }
             } else {
                 // error!
+                steps[currentStep - 1].classList.add('fail');
                 alert("Error on sending request to the server, please try again later.");
+                onErrorPageChange();
             }
+            nextBtn.classList.add('hidden');    // hide the next button
         }
     }
 
