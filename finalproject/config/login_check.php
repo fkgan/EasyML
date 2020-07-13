@@ -7,6 +7,7 @@ if(!isset($_SESSION['userID'])){
 }
 
 if(isset($_GET["logout"])){
+  $_SESSION = array();
   session_destroy();
   echo "<script type='text/javascript'>
     alert('Sucessfully log out!');

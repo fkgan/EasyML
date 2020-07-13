@@ -224,7 +224,28 @@ input[type=checkbox]#center_big{
     height: 25px;
 }
 
+#processing:before{
+    content: '';
+    animation: process infinite 2s;
+}
 
+@keyframes process{
+    0%{
+        content: 'Processing';
+    }
+    30%{
+        content: 'Processing.';
+    }
+    60%{
+        content: 'Processing..';
+    }
+    90%{
+        content: 'Processing...';
+    }
+    100%{
+        content: 'Processing';
+    }
+}
 
 /*  -- footer section --  */
 footer{

@@ -42,7 +42,7 @@
             <div class="navbar-links">
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="#about.php">About</a></li>
+                    <!-- <li><a href="#about.php">About</a></li> -->
                     <li><a href="start.php?action=ask">Ask</a></li>
                     <li><a href="start.php?action=teach">Teach</a></li>
                     <li><a class="dropbtn"><?php echo $_SESSION['name']; ?></a>
@@ -85,7 +85,7 @@
             <div id="navigation_section">
                 <h2>Navigations</h2>
                 <div id="navigation_link_section">
-                    <div><a href="#about.php">About</a></div>
+                    <!-- <div><a href="#about.php">About</a></div> -->
                     <div><a href="start.php?action=ask">Ask</a></div>
                     <div><a href="policy.html" onclick="javascript:void window.open('policy.html','_blank','width=700,height=500,toolbar=0,menubar=1,location=0,status=0,scrollbars=0,resizable=1,left=0,top=0');return false;">Privacy Policy</a></div>
                     <div><a href="start.php?action=teach">Teach</a></div>

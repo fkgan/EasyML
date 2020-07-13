@@ -1,5 +1,6 @@
 <?php
 session_start();
+session_regenerate_id(true);
 
 // include database connection
 include('config/db_connect.php');
@@ -27,14 +28,13 @@ if(isset($_POST['login'])){
 
     if(mysqli_num_rows($result) > 0){
       $_SESSION['userID'] = $user['userID'];              // store userID
-      $_SESSION['username'] = $username;                  // store username
-      $_SESSION['password'] = $password;                  // store password
       $_SESSION['name'] = $user['firstName'];             // store user first name to address him
       //$_SESSION['name'] = $user['firstName'] . " " . $user['lastName'];    // store user full name
       $_SESSION['success'] = "Logged in successfully";    // store message to indicate success login
+      $sessionID = session_id();
 
       // update the lastLoginDate
-      $query = "UPDATE $user_table SET lastLoginDate = NOW() WHERE username='$username'";
+      $query = "UPDATE $user_table SET lastLoginDate = NOW(), sessionToken = '$sessionID' WHERE username='$username'";
       mysqli_query($db, $query);
 
       // go back to homepage
@@ -80,7 +80,7 @@ if(isset($_POST['register'])){
   if(count($errors) == 0){
     $password = hash("sha512", $password_1); // this will encrypt the password using sha512
     // call register api to build the ML model for user
-    $url = "http://110.159.177.152:5000/";                  // API Url
+    $url = "http://175.136.61.41:5000/";                  // API Url
     $dir = "api/registration";                              // API to ask for register
     $API_key = 'AMQI6w9oOb-bqH-9OVTIqurJ';                  // API_key
     $optional_headers = "Content-Type: application/json";

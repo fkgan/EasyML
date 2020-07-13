@@ -395,7 +395,7 @@ input#negative[type=radio]:checked + label>img{
 }
 
 #pg4 .blackboard-content h1{
-    font-family: 'Permanent Marker', cursive;
+    font-family: "Montserrat", sans-serif;
     font-size: 2em;
     text-decoration: underline;
 }
@@ -425,7 +425,7 @@ input#negative[type=radio]:checked + label>img{
 }
 
 #input-sentiment, #tags-review{
-    font-family: 'Permanent Marker', cursive;
+    font-family: "Montserrat", sans-serif;
     text-align: left;
     font-size: 25px;
     text-decoration: none;

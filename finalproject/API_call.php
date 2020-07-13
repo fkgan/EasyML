@@ -4,7 +4,7 @@ session_start();
 if (isset($_REQUEST["action"])){
     //Define variables
     $url = "http://175.136.61.41:5000/";                  // API Url
-    $API_key = 'AMQI6w9oOb-bqH-9OVTIqurJ';                  // Website API Key for POST request
+    $stoken = session_id();                                 // Website API Key for POST request
     $optional_headers = NULL;                               // required header
     $dir = "";                                              // directory to desired API url
     $php_errormsg = "";                                     // to store the error message
@@ -19,9 +19,7 @@ if (isset($_REQUEST["action"])){
         $optional_headers = "Content-Type: application/json";
 
         // Data to send
-        $obj->API_key = $API_key;
-        $obj->username =  $_SESSION['username'];
-        $obj->userpw = $_SESSION['password'];
+        $obj->stoken = $stoken;
         $obj->action = $_REQUEST["action"];
         $obj->datatype = $_REQUEST["datatype"];
         $obj->data = json_decode($_REQUEST["data"]);
@@ -71,9 +69,7 @@ if (isset($_REQUEST["action"])){
         $optional_headers = "Content-Type: application/json";
 
         // Data to send
-        $obj->API_key = $API_key;
-        $obj->username =  $_SESSION['username'];
-        $obj->userpw = $_SESSION['password'];
+        $obj->stoken = $stoken;
         $obj->action = $_REQUEST["action"];
         $obj->data = json_decode($_REQUEST["data"]);
 
@@ -93,9 +89,7 @@ if (isset($_REQUEST["action"])){
         $optional_headers = "Content-Type: application/json";
 
         // Data to send
-        $obj->API_key = $API_key;
-        $obj->username =  $_SESSION['username'];
-        $obj->userpw = $_SESSION['password'];
+        $obj->stoken = $stoken;
         $obj->action = $_REQUEST["action"];
         $obj->datatype = $_REQUEST["datatype"];
         $obj->data = json_decode($_REQUEST["data"]);

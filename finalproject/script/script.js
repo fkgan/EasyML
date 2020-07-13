@@ -9,6 +9,7 @@ toggleButton.addEventListener('click', () => {
 var counter = new Array();
 
 function delete_data() {
+    document.getElementById('btn-del').innerHTML = "<b><span id='processing'></span></b>";
     var chkbx = document.querySelectorAll("input[type=checkbox]");
     for (var i = 0; i < chkbx.length; i++) {
         if (chkbx[i].checked) {
@@ -33,8 +34,9 @@ function delete_data() {
                         // If system return a JSON response
                         var obj = JSON.parse(ajax.responseText);
                         // Check the process status
-                        if (obj['status'] == "success") {
-                            window.location = "settings.php";   // Refresh the page
+                        if (obj['status']['error'] == false) {
+                            // location.reload(true);   // Refresh the page
+                            window.location = "settings.php?action=deleted"
                         }
                         else {
                             // fail to retrain / delete data
