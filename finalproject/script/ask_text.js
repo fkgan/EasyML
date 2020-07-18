@@ -1,7 +1,5 @@
 var // button to trigger the next step
     nextBtn = document.getElementById('nextBtn'),
-    // button to go to previous step
-    backBtn = document.getElementById('backBtn'),
     // button to trigger edit function
     editBtn = document.getElementById('editBtn'),
     // button to trigger windows file selector
@@ -18,18 +16,16 @@ var // button to trigger the next step
     dropMessage = document.getElementById("drop-message"),
     // where images are previewed
     textPreviewRegion = document.getElementById("text-preview"),
-    // where file are preview in page 2
-    pg2Preview = document.getElementById("pg2-preview"),
     // where the blob data will be store
     urls = [];
 
-const MAX_STEPS = 2;
+const MAX_STEPS = 1;
 let currentStep = 1;
 
 // before exiting the page
 window.onbeforeunload = function () {
     // if user has uploaded anything, or has done asking
-    if (urls.length > 0 && ta.value == "" && currentStep != 3) {
+    if (urls.length > 0 && ta.value == "" && currentStep != 2) {
         return 'Changes you made may not be saved.';
     }
 };
@@ -59,51 +55,6 @@ nextBtn.addEventListener('click', () => {
             alert("Please upload at least 1 text file or write something!");
         }
         else {
-            // Changing the file preview in page 2
-            var display = document.createElement("pg2-display");
-            display.className = "pg2-display";
-            pg2Preview.appendChild(display);
-
-            if (urls.length >= 1) {
-                if (urls.length == 1) {
-                    var i = document.createElement("iframe");
-                    display.append(i);
-                    i.src = urls[0];
-                }
-                else {
-                    var i = document.createElement("img");
-                    var fm = document.createElement("div");
-                    fm.id = "file-message";
-                    display.append(i);
-                    display.append(fm);
-                    i.src = "resources/filebox.svg";
-                    i.style.position = "relative";
-                    i.style.width = "50%";
-                    i.style.height = "50%";
-                    i.style.paddingTop = "20%";
-                    fm.innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
-                }
-            }
-            else if (ta.value != "") {
-                var i = document.createElement("iframe");
-                display.append(i);
-                i.src = encodeToBase64(ta.value, 'text/plain');
-            }
-
-            nextBtn.innerHTML = "<b>Ask</b>";
-            editBtn.classList.add('hidden');
-            browseBtn.classList.add('hidden');
-            backBtn.classList.remove('hidden');
-            nextStep();
-        }
-    }
-    // On step 2
-    else if (currentStep == 2) {
-        // Check if at least 1 tag is inserted
-        var text = document.getElementById("tags").value;
-        var tags = tag_processing(text);
-
-        if (!(tags.length < 1)) {
             // create the view of the file on the last page
             inputfiles = document.getElementById('input-files');
             var txtView = document.createElement("div");
@@ -125,22 +76,10 @@ nextBtn.addEventListener('click', () => {
             }
 
             ask();  // send the data
-        }
-        else {
-            alert("Please enter at least 1 tag!");
+            editBtn.classList.add('hidden');
+            browseBtn.classList.add('hidden');
         }
     }
-});
-
-backBtn.addEventListener('click', () => {
-    if (currentStep == 2) {
-        removeElementsByClass("pg2-display");   // delete the page 2 displaying element that is generated so it dont generate again when next is click
-        backBtn.classList.add("hidden");        // hide the back button
-        browseBtn.classList.remove("hidden");   // show the browse button
-    }
-
-    nextBtn.innerHTML = "<b>Next</b>";
-    prevStep();
 });
 
 editBtn.addEventListener('click', () => {
@@ -291,7 +230,6 @@ function previewTextFile(textfile) {
     // read the file
     var reader = new FileReader();
     reader.onload = function (e) {
-        i.src = e.target.result;
         urls.push(e.target.result);     //Append the results into urls array
     }
     reader.readAsDataURL(textfile);
@@ -332,11 +270,8 @@ function removeElementsByClass(className) {
 function reset() {
     urls = [];          // To empty urls array
     ta.value = "";      // To empty the text area
-    removeElementsByClass("text-view");
-    removeElementsByClass("pg2-display");
     dropMessage.classList.remove('hidden');
     editBtn.classList.add('hidden');
-    document.getElementById("tags").value = "";
     ta.style.zIndex = 1;
 }
 
@@ -347,22 +282,6 @@ function encodeToBase64(string, type) {
     //return type + btoa(string);       // doesn't work for characters outside latin-1 range
 }
 
-//To extract the tag from input text
-function tag_processing(text) {
-    //Extract the tags
-    var temp_tags = text.split(",");
-    var tags = [];
-
-    for (var i = 0, j = 0; i < temp_tags.length; i++) {
-        if (temp_tags[i].trim() != "") {
-            tags[j] = temp_tags[i].trim();
-            j++;
-        }
-    }
-
-    return tags;
-}
-
 function onErrorPageChange() {
     steps[currentStep - 1].classList.add('fail');
     pages[currentStep - 1].classList.add('hidden');
@@ -371,19 +290,12 @@ function onErrorPageChange() {
 
 function ask() {
     // perform some changes on UI
-    backBtn.classList.add('hidden');    // hide the back button
     nextBtn.disabled = true;
     nextBtn.innerHTML = "<b><span id='processing'></span></b>";
-
-    // Extracting the tags
-    var text = document.getElementById("tags").value;
-    var tags = tag_processing(text);
 
     // create FormData
     var formData = new FormData();
     formData.append('action', 'ask');
-    formData.append('tags', JSON.stringify(tags));
-
     if (ta.value != "") {
         formData.append('datatype', 'text');
         formData.append('data', JSON.stringify(ta.value));
@@ -410,9 +322,13 @@ function ask() {
                     if (obj['status']['error'] == false) {
                         console.log(obj['status']['message']);
                         if (obj['data']['suggested'] != "") {
-                            document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
-                        }
-                        else {
+                            if (obj['data']['suggested'] > 1) {
+                                document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
+                            }
+                            else {
+                                document.getElementById('tags-review').innerHTML = obj['data']['suggested'];
+                            }
+                        } else {
                             document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
                         }
 

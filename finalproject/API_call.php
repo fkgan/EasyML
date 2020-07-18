@@ -3,8 +3,8 @@ session_start();
 
 if (isset($_REQUEST["action"])){
     //Define variables
-    $url = "http://175.136.61.41:5000/";                  // API Url
-    $stoken = session_id();                                 // Website API Key for POST request
+    $url = "http://175.142.153.73:5000/";                   // API Url
+    $stoken = session_id();                                 // Website session
     $optional_headers = NULL;                               // required header
     $dir = "";                                              // directory to desired API url
     $php_errormsg = "";                                     // to store the error message
@@ -23,7 +23,6 @@ if (isset($_REQUEST["action"])){
         $obj->action = $_REQUEST["action"];
         $obj->datatype = $_REQUEST["datatype"];
         $obj->data = json_decode($_REQUEST["data"]);
-        $obj->tags = json_decode($_REQUEST["tags"]);
 
         // When it is teaching only
         if ($_REQUEST["action"] == "teach"){

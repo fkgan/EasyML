@@ -20,7 +20,7 @@
             width: 300px;
         }
         .progressbar li {
-            width: 50%;
+            width: 100%;
         }
     </style>
 </head>
@@ -56,7 +56,6 @@
             <div class="progress-container">
                 <ul class="progressbar">
                     <li class="steps doing"><b>Upload</b></li>
-                    <li class="steps"><b>Tagging</b></li>
                 </ul>
             </div>
         </div>
@@ -72,17 +71,6 @@
                 </div>
                 <div class="hidden" id="text-region">
                     <textarea id="text-area"></textarea>
-                </div>
-            </div>
-
-            <div class="page hidden" id="pg2">
-                <div class="tips"><h3 class="underline-small">Insert the corresponding tags related to the uploaded content</h3></div>
-                <div class="grid-container">
-                    <div class="pg2-preview">
-                        <img id="pg2-img" alt="image-preview"></img>
-                        <div id="file-message"></div>
-                    </div>
-                    <textarea placeholder="Enter tags and split by ','" name="tags" id="tags" cols="40" rows="15"></textarea>
                 </div>
             </div>
 
@@ -119,10 +107,9 @@
             </div>
             
             <div class="button-area">
-                <button class="button hidden" id="backBtn"><b>Back</b></button>
                 <button class="button" id="browseBtn"><b>Browse</b></button>
                 <button class="button" id="uploadBtn"><b>Upload</b></button>
-                <button class="button hidden" id="nextBtn"><b>Next</b></button>
+                <button class="button hidden" id="nextBtn"><b>Ask</b></button>
             </div>
             
             

@@ -1,7 +1,5 @@
 var // button to trigger the next step
     nextBtn = document.getElementById('nextBtn'),
-    // button to go to previous step
-    backBtn = document.getElementById('backBtn'),
     // button to trigger windows file selector
     browseBtn = document.getElementById('browseBtn'),
     // button to upload and send the image file for OCR
@@ -23,13 +21,13 @@ var // button to trigger the next step
     // where the blob data will be store
     urls = [];
 
-const MAX_STEPS = 2;
+const MAX_STEPS = 1;
 let currentStep = 1;
 
 // before exiting the page
 window.onbeforeunload = function () {
     // if user has uploaded anything, or has done asking
-    if (urls.length > 0 && currentStep != 3) {
+    if (urls.length > 0 && currentStep != 2) {
         return 'Changes you made may not be saved.';
     }
 };
@@ -45,36 +43,6 @@ nextBtn.addEventListener('click', () => {
             alert("Maybe you want to write some text before proceed?");
         }
         else {
-            if (urls.length == 1) {
-                document.getElementById('pg2-img').src = urls[0];
-                document.getElementById('pg2-img').style.position = "absolute";
-                document.getElementById('pg2-img').style.width = "auto";
-                document.getElementById('pg2-img').style.height = "auto";
-                document.getElementById('pg2-img').style.paddingTop = "0%";
-                document.getElementById('file-message').innerHTML = "";
-            }
-            else if (urls.length > 1) {
-                document.getElementById('pg2-img').src = "resources/filebox.svg";
-                document.getElementById('pg2-img').style.position = "relative";
-                document.getElementById('pg2-img').style.width = "50%";
-                document.getElementById('pg2-img').style.height = "50%";
-                document.getElementById('pg2-img').style.paddingTop = "20%";
-                document.getElementById('file-message').innerHTML = "<b>" + urls.length + "</b>" + " files selected.";
-            }
-
-            nextBtn.innerHTML = "<b>Ask</b>";
-            backBtn.classList.remove('hidden'); // show the back button
-            browseBtn.classList.add('hidden');  // hide the browse button
-            nextStep();
-        }
-    }
-    // On step 2
-    else if (currentStep == 2) {
-        // Check if at least 1 tag is inserted
-        var text = document.getElementById("tags").value;
-        var tags = tag_processing(text);
-
-        if (!(tags.length < 1)) {
             // create the view of the file on the last page
             inputfiles = document.getElementById('input-files');
             var imgView = document.createElement("div");
@@ -88,22 +56,10 @@ nextBtn.addEventListener('click', () => {
                 img.src = urls[i];
             }
 
-            ask();  // send the data
-        }
-        else {
-            alert("Please enter at least 1 tag!");
+            ask();
+            browseBtn.classList.add('hidden');  // hide the browse button
         }
     }
-});
-
-backBtn.addEventListener('click', () => {
-    if (currentStep == 2) {
-        backBtn.classList.add("hidden");        // hide the back button
-        browseBtn.classList.remove("hidden");   // show the browse button
-    }
-
-    nextBtn.innerHTML = "<b>Next</b>";
-    prevStep();
 });
 
 // On click, call api to retrieve OCR's text
@@ -319,23 +275,6 @@ function reset() {
     urls = [];      // To empty urls array
     removeElementsByClass("image-view");
     uploadBtn.innerHTML = "<b>Upload</b>";
-    document.getElementById("tags").value = "";
-}
-
-//To extract the tag from input text
-function tag_processing(text) {
-    //Extract the tags
-    var temp_tags = text.split(",");
-    var tags = [];
-
-    for (var i = 0, j = 0; i < temp_tags.length; i++) {
-        if (temp_tags[i].trim() != "") {
-            tags[j] = temp_tags[i].trim();
-            j++;
-        }
-    }
-
-    return tags;
 }
 
 function onErrorPageChange() {
@@ -349,20 +288,14 @@ function onErrorPageChange() {
 
 function ask() {
     // perform some changes on UI
-    backBtn.classList.add('hidden');    // hide the back button
     nextBtn.disabled = true;
     nextBtn.innerHTML = "<b><span id='processing'></span></b>";
-
-    // Extracting the tags
-    var text = document.getElementById("tags").value;
-    var tags = tag_processing(text);
 
     // create FormData
     var formData = new FormData();
     formData.append('action', 'ask');
     formData.append('datatype', 'text')
     formData.append('data', JSON.stringify(ta.value));
-    formData.append('tags', JSON.stringify(tags));
 
     var uploadLocation = 'API_call.php';
     var ajax = new XMLHttpRequest();
@@ -379,7 +312,12 @@ function ask() {
                     if (obj['status']['error'] == false) {
                         console.log(obj['status']['message']);
                         if (obj['data']['suggested'] != "") {
-                            document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
+                            if (obj['data']['suggested'] > 1) {
+                                document.getElementById('tags-review').innerHTML = obj['data']['suggested'].join(", ");
+                            }
+                            else {
+                                document.getElementById('tags-review').innerHTML = obj['data']['suggested'];
+                            }
                         } else {
                             document.getElementById('tags-review').innerHTML = "There is no related tags in the database.";
                         }

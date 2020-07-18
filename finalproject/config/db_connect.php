@@ -12,6 +12,5 @@ $db = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die('Could not
 // Assign variables to use in query
 $user_table = "users";                  // user account information
 $data_table = 'training_data';          // trained data
-$APIkey = 'AMQI6w9oOb-bqH-9OVTIqurJ';   // Website API Key
 
 ?>
